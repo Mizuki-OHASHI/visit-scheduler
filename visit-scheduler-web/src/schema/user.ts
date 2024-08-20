@@ -21,8 +21,7 @@ export type AppUser = z.infer<typeof appUserSchema>;
 ////////////////////// VisitUser ////////////////////////
 
 export const visitUserProfileSchema = z.object({
-  family_name: z.string(),
-  first_name: z.string(),
+  name: z.string(),
   last_visit: datetimeSchema,
   entry_cohort: naturalNumberSchema, // n期生
   gender: genderSchema,
@@ -35,7 +34,7 @@ export type VisitUserProfile = z.infer<typeof visitUserProfileSchema>;
 export const visitUserScheduleSchema = z.object({
   schedule_id: visitScheduleIdSchema,
   status: scheduleStatusSchema,
-  remark: z.string().optional(),
+  remarks: z.string().optional(),
 });
 
 export type VisitUserSchedule = z.infer<typeof visitUserScheduleSchema>;

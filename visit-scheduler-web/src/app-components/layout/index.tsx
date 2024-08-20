@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, ReactNode } from "react";
 
 import Header from "#/layout/header";
@@ -9,7 +11,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
       <Header />
       <div className="flex size-full flex-col-reverse sm:flex-row">
         <Navigation />
-        <div className="flex size-full">{children}</div>
+        <div className="flex size-full items-center justify-center">{children}</div>
       </div>
     </div>
   );

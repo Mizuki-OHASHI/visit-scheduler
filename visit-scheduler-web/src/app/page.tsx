@@ -1,6 +1,16 @@
-// import Image from "next/image";
+"use client";
 
 import { FC } from "react";
+
+const Dashboard: FC = () => {
+  return (
+    <div className="flex size-full items-center justify-center">
+      <h1 className="text-4xl font-bold">Dashboard</h1>
+    </div>
+  );
+};
+
+export default Dashboard;
 
 // export default function Home() {
 //   return (
@@ -113,13 +123,3 @@ import { FC } from "react";
 //     </main>
 //   );
 // }
-
-const Dashboard: FC = () => {
-  return (
-    <div className="flex items-center justify-center">
-      <h1 className="text-4xl font-bold">Dashboard</h1>
-    </div>
-  );
-};
-
-export default Dashboard;

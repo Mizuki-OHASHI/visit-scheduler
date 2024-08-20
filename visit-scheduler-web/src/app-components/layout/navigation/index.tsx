@@ -1,5 +1,3 @@
-"use client";
-
 import { FC } from "react";
 import { AiOutlineUser } from "react-icons/ai";
 import { RiCalendar2Line, RiDashboardLine } from "react-icons/ri";
