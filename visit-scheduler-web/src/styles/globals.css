@@ -7,6 +7,20 @@
     color: #cbd5e1; /* slate-300 */
     background-color: #0f172a; /* slate-900 */
   }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  } /* 数値入力の矢印ボタンを非表示 (Chrome, Safari) */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  } /* 数値入力の矢印ボタンを非表示 (Firefox) */
+
+  input::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 }
 
 /* :root {

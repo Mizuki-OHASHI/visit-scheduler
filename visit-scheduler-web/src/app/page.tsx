@@ -1,16 +1,8 @@
 "use client";
 
-import { FC } from "react";
-
-const Dashboard: FC = () => {
-  return (
-    <div className="flex size-full items-center justify-center">
-      <h1 className="text-4xl font-bold">Dashboard</h1>
-    </div>
-  );
-};
-
-export default Dashboard;
+export default function DashboardPage() {
+  return <div>Sorry, this page is not implemented yet.</div>;
+}
 
 // export default function Home() {
 //   return (

@@ -83,3 +83,24 @@ export const scheduleStatusJa = (s: ScheduleStatus) => {
       return "-";
   }
 };
+
+//////////////////////// Comparison Operator ////////////////////////
+
+export const comparisonOperatorArr = ["==", "<=", ">="] as const;
+
+export const comparisonOperatorSchema = z.enum(comparisonOperatorArr);
+
+export type ComparisonOperator = z.infer<typeof comparisonOperatorSchema>;
+
+export const comparisonOperatorJa = (o: ComparisonOperator) => {
+  switch (o) {
+    case "==":
+      return "と等しい";
+    case "<=":
+      return "以下";
+    case ">=":
+      return "以上";
+    default:
+      return "-";
+  }
+};

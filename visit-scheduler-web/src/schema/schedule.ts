@@ -1,32 +1,16 @@
 import { z } from "zod";
 
 import { dateSchema } from "@/lib/datetime";
-import { chouseisanIdSchema, scheduleGroupIdSchema, taskIdSchema } from "@/schema/id";
-
-////////////////////// Task ////////////////////////
-
-export const taskSchema = z.object({
-  id: taskIdSchema,
-  name: z.string(),
-});
-
-export type Task = z.infer<typeof taskSchema>;
-
-////////////////////// Candidate ////////////////////////
-
-export const candidateSchema = z.object({
-  date: dateSchema,
-  group: scheduleGroupIdSchema.nullable(),
-});
-
-export type Candidate = z.infer<typeof candidateSchema>;
+import { naturalNumberSchema } from "@/schema/common";
+import { comparisonOperatorSchema } from "@/schema/enum";
+import { chouseisanIdSchema, scheduleGroupIdSchema } from "@/schema/id";
 
 ////////////////////// Schedule Group ////////////////////////
 
 export const scheduleGroupSchema = z.object({
   id: scheduleGroupIdSchema,
   name: z.string(),
-  tasks: z.array(taskSchema),
+  tasks: z.array(z.string()),
   description: z.string().optional(),
 });
 
@@ -37,7 +21,7 @@ export type ScheduleGroup = z.infer<typeof scheduleGroupSchema>;
 export const scheduleMasterSchema = z.object({
   chouseisan_id: chouseisanIdSchema,
   title: z.string(),
-  candidates: z.array(candidateSchema),
+  candidates: z.array(dateSchema),
 });
 
 export type ScheduleMaster = z.infer<typeof scheduleMasterSchema>;
@@ -50,3 +34,50 @@ export const syncChouseisanResultSchema = z.object({
 });
 
 export type SyncChouseisanResult = z.infer<typeof syncChouseisanResultSchema>;
+
+////////////////////// Optimize Config ////////////////////////
+
+export const entryCohortConstraintSchema = z.array(
+  z.tuple([z.array(naturalNumberSchema), comparisonOperatorSchema, naturalNumberSchema]),
+);
+
+export type EntryCohortConstraint = z.infer<typeof entryCohortConstraintSchema>;
+
+export const constraintsByCandidateSchema = z.object({
+  candidate: dateSchema,
+  group: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((r) => r ?? null),
+  tasks: z.array(z.tuple([z.string(), z.number().int()])),
+  irregular_member_count_constraint: naturalNumberSchema
+    .nullable()
+    .optional()
+    .transform((r) => r ?? null),
+});
+
+export type ConstraintsByCandidate = z.infer<typeof constraintsByCandidateSchema>;
+
+export const optimizeConfigSchema = z.object({
+  chouseisan_id: chouseisanIdSchema,
+  entry_cohort_constraint: entryCohortConstraintSchema,
+  driver_level_constraint: z.number().int().nonnegative(),
+  basic_member_count_constraint: naturalNumberSchema,
+  gender_consideration: z.array(naturalNumberSchema),
+  candidate_constraints: z.array(constraintsByCandidateSchema),
+});
+
+export type OptimizeConfig = z.infer<typeof optimizeConfigSchema>;
+
+////////////////////// Schedule With Config ////////////////////////
+
+export const scheduleWithConfigSchema = z.object({
+  schedule_master: scheduleMasterSchema,
+  optimize_config: optimizeConfigSchema
+    .optional()
+    .nullable()
+    .transform((r) => r ?? null),
+});
+
+export type ScheduleWithConfig = z.infer<typeof scheduleWithConfigSchema>;

@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from google.cloud.firestore import Client
 
@@ -11,14 +11,14 @@ class Dao(ABC):
         self.col = collection
         self.col_ref = self.db.collection(collection)
 
-    @abstractmethod
-    def get_by_id(self):
-        NotImplementedError
+    # @abstractmethod
+    # def get_by_id(self):
+    #     NotImplementedError
 
-    @abstractmethod
-    def create(self):
-        NotImplementedError
+    # @abstractmethod
+    # def create(self):
+    #     NotImplementedError
 
-    @abstractmethod
-    def update(self):
-        NotImplementedError
+    # @abstractmethod
+    # def update(self):
+    #     NotImplementedError

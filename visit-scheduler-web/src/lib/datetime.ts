@@ -1,5 +1,8 @@
-import dayjs, { Dayjs } from "dayjs";
+import dayjs, { Dayjs, extend } from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { z } from "zod";
+
+extend(utc);
 
 ////////////////////// Datetime ////////////////////////
 
@@ -17,7 +20,8 @@ export const newDatetime = (v: DatetimeInput): Datetime => datetimeSchema.parse(
 ////////////////////// Date ////////////////////////
 export const dateSchema = z
   .instanceof(dayjs as unknown as typeof Dayjs)
-  .or(z.coerce.date().transform((value) => dayjs(value).startOf("day")))
+  .or(z.coerce.date())
+  .transform((value) => dayjs.utc(value).startOf("day"))
   .brand("date");
 
 export type Date = z.infer<typeof dateSchema>;

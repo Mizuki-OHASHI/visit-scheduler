@@ -1,6 +1,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
 
+import ScheduleAdjustmentChouseisanIdComponent from "#/schedule/adjustment/chouseisan-id/component";
 import { chouseisanIdSchema } from "@/schema/id";
 
 const ScheduleAdjustmentChouseisanIdPage: FC = () => {
@@ -16,7 +17,7 @@ const ScheduleAdjustmentChouseisanIdPage: FC = () => {
 
   if (!success) return null;
 
-  return <div>{parsedChouseisanId}</div>;
+  return <ScheduleAdjustmentChouseisanIdComponent chouseisanId={parsedChouseisanId} />;
 };
 
 export default ScheduleAdjustmentChouseisanIdPage;

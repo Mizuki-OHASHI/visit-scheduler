@@ -23,7 +23,7 @@ export const appUserSchema = appUserBaseSchema.extend({
 
 export type AppUser = z.infer<typeof appUserSchema>;
 
-////////////////////// VisitUser ////////////////////////
+////////////////////// Visit User ////////////////////////
 
 export const visitUserSchema = z.object({
   id: visitUserIdSchema,
@@ -41,6 +41,8 @@ export const visitUserSchema = z.object({
 });
 
 export type VisitUser = z.infer<typeof visitUserSchema>;
+
+////////////////////// Sync Visit User Result ////////////////////////
 
 export const syncVisitUserResultSchema = z.object({
   added: z.number(),

@@ -13,17 +13,15 @@ type ScheduleListItemProps = {
 };
 
 const ScheduleListItem: FC<ScheduleListItemProps> = ({ schedule, onClick }) => {
-  const sortedCandidates = schedule.candidates.slice().sort((a, b) => a.date.valueOf() - b.date.valueOf());
+  const sortedCandidates = schedule.candidates.slice().sort((a, b) => a.valueOf() - b.valueOf());
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between border-b border-gray-700 px-4">
         <div>{schedule.title}</div>
         <div className="hidden sm:block">
-          {[
-            sortedCandidates[0].date.format("M/D"),
-            "〜",
-            sortedCandidates[sortedCandidates.length - 1].date.format("M/D"),
-          ].join(" ")}
+          {[sortedCandidates[0].format("M/D"), "〜", sortedCandidates[sortedCandidates.length - 1].format("M/D")].join(
+            " ",
+          )}
         </div>
         <div className="flex h-8 items-center space-x-2">
           <Link href={`/schedule/adjustment/${schedule.chouseisan_id}`}>

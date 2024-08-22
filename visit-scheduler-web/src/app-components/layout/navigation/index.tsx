@@ -30,7 +30,7 @@ const Navigation: FC = () => {
     },
     {
       path: "/me",
-      label: "プロフィール",
+      label: "アカウント",
       Icon: <AiOutlineUser size={24} color="gray" />,
     },
   ] satisfies NavigationItemProps[];

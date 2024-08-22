@@ -1,3 +1,3 @@
 export default function MePage() {
-  return <div>TODO: Implement MePage</div>;
+  return <div>Sorry, this page is not implemented yet.</div>;
 }

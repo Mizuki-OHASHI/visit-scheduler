@@ -13,7 +13,7 @@ const BasicButton: FC<BasicButtonProps> = ({ children, onClick, size = "md", dis
   return (
     <button
       onClick={() => !disabled && onClick()}
-      className={cn("rounded-md size-full border-slate-700 border", {
+      className={cn("rounded-xl size-full border-slate-700 border", {
         "size-12": size === "sm",
         "size-16": size === "md",
         "size-20": size === "lg",

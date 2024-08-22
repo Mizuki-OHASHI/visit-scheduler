@@ -29,9 +29,7 @@ class ScheduleMasterDao(Dao):
         doc_ref = self.col_ref.document(chouseisan_id)
         doc = doc_ref.get()
         if doc.exists:
-            schedule_master = ScheduleMasterDto.model_validate(doc.to_dict()).to_model(
-                tasks=[]
-            )
+            schedule_master = ScheduleMasterDto.model_validate(doc.to_dict()).to_model()
             schedule_master_cache.set(chouseisan_id, schedule_master)
             return schedule_master
 

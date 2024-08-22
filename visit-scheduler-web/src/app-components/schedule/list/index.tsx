@@ -2,10 +2,10 @@ import { FC, useMemo } from "react";
 
 import ScheduleListItem from "#/schedule/list/list-item";
 import ScheduleRegister from "#/schedule/list/register";
-import { useSchedule } from "@/api/useSchedule";
+import { useManySchedules } from "@/api/useSchedule";
 
 const ScheduleListPage: FC = () => {
-  const { fetchAllSchedule } = useSchedule();
+  const { fetchAllSchedule } = useManySchedules();
   const schedules = useMemo(() => fetchAllSchedule.data?.slice() ?? [], [fetchAllSchedule.data]);
 
   return (

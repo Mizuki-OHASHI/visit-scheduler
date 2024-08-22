@@ -1,3 +1,4 @@
+from datetime import date
 import io
 import re
 from time import time
@@ -10,7 +11,7 @@ from lib.datetime import parse_date
 from lib.format_name import format_name
 from lib.logger import logger
 from schema.enum import ScheduleStatus
-from schema.schedule import Candidate, ScheduleMaster
+from schema.schedule import ScheduleMaster
 from schema.user import VisitUserSchedule
 
 
@@ -31,7 +32,6 @@ def get_schedule_from_chouseisan(
         chouseisan_id=chouseisan_id,
         title=title,
         candidates=candidates,
-        groups=[],
     )
 
     visit_users_schedule = extract_visit_users_schedule(df)
@@ -83,12 +83,11 @@ def parse_raw_csv(raw_csv: str) -> Tuple[pd.DataFrame, str]:
     return df, title
 
 
-def extract_candidates(df: pd.DataFrame) -> List[Candidate]:
+def extract_candidates(df: pd.DataFrame) -> List[date]:
     """データフレームから候補日を抽出する"""
 
     candidates_col = df["日程"].tolist()[:-1]  # 最終行はコメントなので除外
-    parsed_candidates = [parse_date(c) for c in candidates_col]
-    candidates = [Candidate(date=c, group=None) for c in parsed_candidates]
+    candidates = [parse_date(c) for c in candidates_col]
 
     return candidates
 

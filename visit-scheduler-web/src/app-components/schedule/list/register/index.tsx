@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { MdSync } from "react-icons/md";
 
-import { useSchedule } from "@/api/useSchedule";
+import { useManySchedules } from "@/api/useSchedule";
 import InputWithButton from "@/components/input/input-with-button";
 import { chouseisanIdSchema } from "@/schema/id";
 import { SyncChouseisanResult } from "@/schema/schedule";
@@ -15,7 +15,7 @@ const ScheduleRegister: FC<ScheduleRegisterProps> = ({ refetchSchedules }) => {
   const [chouseisanLink, setChouseisanLink] = useState("");
   const [result, setResult] = useState<SyncChouseisanResult | null>(null);
 
-  const { syncChouseisan } = useSchedule();
+  const { syncChouseisan } = useManySchedules();
 
   const syncChouseisanHandler = (chouseisanLink: string) => {
     const { data: chouseisanId, success } = chouseisanIdSchema.safeParse(chouseisanLink);
@@ -67,7 +67,7 @@ const ScheduleRegister: FC<ScheduleRegisterProps> = ({ refetchSchedules }) => {
             <div className="flex items-center justify-start">
               <div className="w-20 shrink-0 text-slate-500">候補日</div>
               <div className="grow break-words">
-                {result.schedule_master.candidates.map(({ date }) => date.format("M/D")).join(", ")}
+                {result.schedule_master.candidates.map((date) => date.format("M/D")).join(", ")}
               </div>
             </div>
             {result.diff_visit_users.length > 0 && (

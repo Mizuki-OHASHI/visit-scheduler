@@ -2,14 +2,17 @@ from typing import List
 
 from fastapi import APIRouter, Response, status
 
+from dao.common import CommonDao
 from dao.user import VisitUserDao
 from lib.logger import logger
 from lib.spreadsheet import get_member_from_spreadsheet
+from lib.task import diff_task_list
 from lib.visit_user import visit_users_diff
 from schema.user import SyncVisitUserResult, VisitUser
 
 router = APIRouter(tags=["visit_user"])
 visit_user_dao = VisitUserDao()
+common_dao = CommonDao()
 
 
 @router.post(
@@ -41,6 +44,12 @@ def sync_member_from_spreadsheet(
         len(updated),
         len(unchanged),
     )
+
+    task_list = common_dao.get_common().task_list
+    new_task_list = diff_task_list(task_list, added + updated)
+    if len(new_task_list) > 0:
+        task_list.extend(new_task_list)
+        common_dao.upsert_common(task_list=task_list)
 
     result = SyncVisitUserResult(
         added=len(added),
