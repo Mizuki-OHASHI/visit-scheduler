@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+from lib.logger import logger
 from src.dao.user import AppUserDao
 from src.router import router_list
 from src.lib.firebase import get_verify_token
@@ -14,15 +15,13 @@ app = FastAPI()
 
 
 def custom_openapi():
-    """
-    認証のための OpenAPI スキーマを追加する
-    """
+    """認証のための OpenAPI スキーマを追加する"""
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
         title="Custom API",
         version="1.0.0",
-        description="This is a custom OpenAPI schema",
+        description="Visit Scheduler API",
         routes=app.routes,
     )
     openapi_schema["components"]["securitySchemes"] = {
@@ -49,9 +48,7 @@ app.openapi = custom_openapi
 
 
 def validate_uid(uid: Any) -> bool:
-    """
-    有効な UID かどうかを検証する
-    """
+    """有効な UID かどうかを検証する"""
     return isinstance(uid, str) and len(uid) > 0
 
 
@@ -61,8 +58,7 @@ async def authorization(
     call_next: Callable[[Request], Coroutine[None, None, Response]],
     verify_token: Callable[[str], dict] = get_verify_token(),
 ) -> Response:
-    """
-    認証を行う
+    """認証を行う
 
     - Bearer トークンを取得し, ユーザーを取得する
     - ユーザーが存在しない場合は 401 エラーを返す (一部例外あり)
@@ -129,7 +125,8 @@ async def add_process_time_header(
     request: Request,
     call_next: Callable[[Request], Coroutine[None, None, Response]],
 ) -> Response:
-    """
+    """ミドルウェア
+
     - リクエストの処理時間をヘッダーに追加する
     - OPTIONS メソッドの場合は直ちに 204 を返す
     """
@@ -137,7 +134,15 @@ async def add_process_time_header(
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     start_time = time()
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception as e:
+        logger.error("internal server error: %s", e)
+        return Response(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            headers={"message": "internal server error.", "error": str(e)},
+        )
+
     process_time = time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
     return response
@@ -156,7 +161,7 @@ app.add_middleware(
 #################### Endpoints ####################
 
 
-@app.get("/health")
+@app.get("/health", tags=["public"])
 def health():
     return {"status": "ok"}
 

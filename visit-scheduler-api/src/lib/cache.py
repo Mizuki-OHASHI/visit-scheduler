@@ -4,8 +4,7 @@ from src.lib.logger import logger
 
 
 class LRUCache:
-    """
-    Least Recently Used Cache
+    """Least Recently Used Cache
 
     - 参照・更新があった場合に、そのキーを最新の位置に移動する
     """

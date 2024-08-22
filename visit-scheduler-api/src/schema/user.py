@@ -2,6 +2,9 @@ from datetime import date, datetime
 from enum import Enum
 from typing import List, Optional
 
+from numpy import piecewise
+from pandas import to_datetime
+
 from src.schema.enum import AppUserRole, DriverLevel, Gender, ScheduleStatus
 from src.schema.config import VSBaseModel
 
@@ -36,6 +39,33 @@ class VisitUserBase(VSBaseModel):
 class VisitUser(VisitUserBase):
     id: str
     created_at: datetime
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, VisitUser):
+            return False
+        return (
+            self.name == other.name
+            and self.last_visit == other.last_visit
+            and self.entry_cohort == other.entry_cohort
+            and self.gender == other.gender
+            and self.driver_level == other.driver_level
+            and self.responsible_tasks == other.responsible_tasks
+        )
+
+    def to_dto(self) -> "VisitUserDto":
+        return VisitUserDto(
+            last_visit=to_datetime(self.last_visit),
+            **self.model_dump(exclude=["last_visit"])
+        )
+
+
+class VisitUserDto(VisitUser):
+    last_visit: datetime
+
+    def to_model(self) -> VisitUser:
+        return VisitUser(
+            last_visit=self.last_visit.date(), **self.model_dump(exclude=["last_visit"])
+        )
 
 
 class VisitUserSchedule(VSBaseModel):

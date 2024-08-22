@@ -14,6 +14,18 @@ export type VisitUserId = z.infer<typeof visitUserIdSchema>;
 
 ////////////////////// VisitSchedule ////////////////////////
 
+// https://docs.google.com/spreadsheets/d/1yVR0FWdVUVEIKwNdyb-WGY-d_cZOD4-dGip2g-4GzCU/edit?usp=sharing
+// https://docs.google.com/spreadsheets/d/1DdbyDNKMzAxjkE1JKZ0EtJQUdomvqqMyD9r6inJEsmU/edit?usp=sharing
+
+export const spreadsheetIdSchema = z
+  .string()
+  .regex(/^https:\/\/docs\.google\.com\/spreadsheets\/d\/.{44}\/edit\?usp=sharing$/)
+  .transform((v) => v.slice(39, 39 + 44))
+  .or(z.string().refine((v) => v.length === 44))
+  .brand("spreadsheet_id");
+
+export type SpreadsheetId = z.infer<typeof spreadsheetIdSchema>;
+
 export const taskIdSchema = idSchema.brand("task_id");
 
 export type TaskId = z.infer<typeof taskIdSchema>;

@@ -10,9 +10,7 @@ import re
 
 
 def get_schedule_from_chouseisan(chouseisan_id: str) -> Optional[ScheduleMaster]:
-    """
-    調整さんの ID から CSV データを取得し、整形したデータフレームを返す
-    """
+    """調整さんの ID から CSV データを取得し、整形したデータフレームを返す"""
 
     raw_csv = fetch_chouseisan(chouseisan_id)
     if raw_csv is None:
@@ -33,9 +31,7 @@ def get_schedule_from_chouseisan(chouseisan_id: str) -> Optional[ScheduleMaster]
 
 
 def fetch_chouseisan(chouseisan_id: str) -> Optional[str]:
-    """
-    調整さんから CSV データを取得する HTTP リクエストを行う
-    """
+    """調整さんから CSV データを取得する HTTP リクエストを行う"""
 
     if chouseisan_id is None or len(chouseisan_id) == 0:
         raise ValueError("invalid chouseisan ID")
@@ -62,8 +58,7 @@ def fetch_chouseisan(chouseisan_id: str) -> Optional[str]:
 
 
 def parse_raw_csv(raw_csv: str) -> Tuple[pd.DataFrame, str]:
-    """
-    調整さんの CSV データを整形する
+    """調整さんの CSV データを整形する
 
     入力例:
         対面活動
@@ -74,16 +69,14 @@ def parse_raw_csv(raw_csv: str) -> Tuple[pd.DataFrame, str]:
         9/29(日) ,△,◯,×,◯,◯,◯
         ...
     """
-    title = re.search(r"^.*\n", raw_csv).group()
+    title = re.search(r"^.*\n", raw_csv).group().strip()
 
     df = pd.read_csv(io.StringIO(raw_csv), skiprows=2)
     return df, title
 
 
 def extract_candidates(df: pd.DataFrame) -> List[Candidate]:
-    """
-    データフレームから候補日を抽出する
-    """
+    """データフレームから候補日を抽出する"""
 
     candidates_col = df["日程"].tolist()[:-1]  # 最終行はコメントなので除外
     parsed_candidates = [parse_date(c) for c in candidates_col]

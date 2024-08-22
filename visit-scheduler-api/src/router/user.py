@@ -1,13 +1,16 @@
+from typing import List
 from fastapi import APIRouter, Response, status, Request
 from google.cloud.firestore import Client
 
+from lib.spreadsheet import get_member_from_spreadsheet
 from src.lib.actor import get_actor_from_state
-from src.dao.user import AppUserDao
-from src.schema.user import AppUser, AppUserBase
+from src.dao.user import AppUserDao, VisitUserDao
+from src.schema.user import AppUser, AppUserBase, VisitUser
 from datetime import datetime
 
 
 router = APIRouter(tags=["user"])
+app_user_dao = AppUserDao()
 
 
 @router.post(
@@ -25,7 +28,6 @@ def create_app_user(request: Request, app_user: AppUserBase):
             headers={"message": "uid is not set."},
         )
 
-    app_user_dao = AppUserDao()
     app_user_with_id = AppUser(
         id=uid, created_at=datetime.now(), **app_user.model_dump()
     )

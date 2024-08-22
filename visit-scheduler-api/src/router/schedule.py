@@ -34,3 +34,12 @@ def sync_chouseisan_schedule(chouseisan_id: str):
 
     schedule_master_dao.create(schedule_master)
     return schedule_master
+
+
+@router.get(
+    "/schedule/list",
+    response_model=List[ScheduleMaster],
+    description="スケジュール一覧を取得する",
+)
+def get_schedule_list():
+    return schedule_master_dao.get_all()

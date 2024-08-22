@@ -36,7 +36,7 @@ const Navigation: FC = () => {
   ] satisfies NavigationItemProps[];
 
   return (
-    <div className="sticky left-0 top-0 flex h-12 w-full shrink-0 justify-around bg-slate-950 text-slate-300 transition-all duration-100 sm:size-12 sm:h-full sm:flex-col sm:justify-start md:w-52">
+    <div className="flex h-12 w-full shrink-0 justify-around bg-slate-950 text-slate-300 transition-all duration-100 sm:size-12 sm:h-full sm:flex-col sm:justify-start md:w-52">
       {navigationItems.map((item) => (
         <NavigationItem key={item.path} {...item} />
       ))}

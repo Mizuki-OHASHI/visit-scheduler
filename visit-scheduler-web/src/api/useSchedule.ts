@@ -1,4 +1,4 @@
-import { useMutation } from "@/api/useApi";
+import { useFetch, useMutation } from "@/api/useApi";
 import { ScheduleMaster, scheduleMasterSchema } from "@/schema/schedule";
 
 export const useSchedule = () => ({
@@ -6,4 +6,5 @@ export const useSchedule = () => ({
     schema: scheduleMasterSchema,
     inQuery: true,
   }),
+  fetchAllSchedule: useFetch<ScheduleMaster[]>(["schedule", "list"], scheduleMasterSchema.array()),
 });

@@ -9,9 +9,9 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div className="flex h-screen w-screen flex-col">
       <Header />
-      <div className="flex size-full flex-col-reverse sm:flex-row">
+      <div className="flex h-[calc(100vh-7rem)] w-full grow flex-col-reverse sm:h-[calc(100vh-4rem)] sm:flex-row">
         <Navigation />
-        <div className="flex size-full items-center justify-center">{children}</div>
+        <div className="flex w-full items-center justify-center overflow-y-scroll">{children}</div>
       </div>
     </div>
   );
