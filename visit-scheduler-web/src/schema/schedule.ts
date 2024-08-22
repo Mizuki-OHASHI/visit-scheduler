@@ -41,3 +41,12 @@ export const scheduleMasterSchema = z.object({
 });
 
 export type ScheduleMaster = z.infer<typeof scheduleMasterSchema>;
+
+////////////////////// Sync Chouseisan Result ////////////////////////
+
+export const syncChouseisanResultSchema = z.object({
+  schedule_master: scheduleMasterSchema,
+  diff_visit_users: z.array(z.string()),
+});
+
+export type SyncChouseisanResult = z.infer<typeof syncChouseisanResultSchema>;

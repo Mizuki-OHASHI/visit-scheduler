@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+
 from google.cloud.firestore import Client
-from src.lib.firebase import get_db_client
+
+from lib.firebase import get_db_client
 
 
 class Dao(ABC):

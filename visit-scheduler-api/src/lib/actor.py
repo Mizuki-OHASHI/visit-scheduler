@@ -1,5 +1,6 @@
 from fastapi import Request
-from src.schema.user import AppUser
+
+from schema.user import AppUser
 
 
 def get_actor_from_state(request: Request) -> AppUser:
@@ -9,4 +10,4 @@ def get_actor_from_state(request: Request) -> AppUser:
         raise Exception("actor is not set.")
     if isinstance(actor, AppUser):
         return actor
-    raise Exception("invalid actor type.")
+    raise Exception("invalid actor type {}".format(type(actor)))

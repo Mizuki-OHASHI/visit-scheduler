@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react";
 import { ComponentSize } from "@/components/props-types";
 
 type IconButtonProps = {
-  onClick: () => void;
+  onClick?: () => void;
   children: ReactNode;
   size?: ComponentSize;
 };

@@ -1,15 +1,12 @@
 from typing import List
-from fastapi import APIRouter, Response, status, Request
-from google.cloud.firestore import Client
 
+from fastapi import APIRouter, Response, status
+
+from dao.user import VisitUserDao
+from lib.logger import logger
 from lib.spreadsheet import get_member_from_spreadsheet
-from src.lib.logger import logger
-from src.lib.actor import get_actor_from_state
-from src.dao.user import AppUserDao, VisitUserDao
-from src.lib.visit_user import visit_users_diff
-from src.schema.user import AppUser, AppUserBase, VisitUser
-from datetime import datetime
-
+from lib.visit_user import visit_users_diff
+from schema.user import SyncVisitUserResult, VisitUser
 
 router = APIRouter(tags=["visit_user"])
 visit_user_dao = VisitUserDao()
@@ -18,7 +15,7 @@ visit_user_dao = VisitUserDao()
 @router.post(
     "/member/spreadsheet",
     description="メンバー情報をスプレッドシートから取得",
-    response_model=List[VisitUser],
+    response_model=SyncVisitUserResult,
 )
 def sync_member_from_spreadsheet(
     spreadsheet_id: str,
@@ -45,4 +42,18 @@ def sync_member_from_spreadsheet(
         len(unchanged),
     )
 
-    return visit_users
+    result = SyncVisitUserResult(
+        added=len(added),
+        updated=len(updated),
+    )
+
+    return result
+
+
+@router.get(
+    "/member",
+    response_model=List[VisitUser],
+    description="メンバー情報取得",
+)
+def get_members():
+    return visit_user_dao.get_all()

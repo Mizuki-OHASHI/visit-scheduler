@@ -1,16 +1,23 @@
-from time import time
 import io
-from typing import List, Optional, Tuple
+import re
+from time import time
+from typing import Dict, List, Optional, Tuple
+
 import pandas as pd
 import requests
+
 from lib.datetime import parse_date
+from lib.format_name import format_name
+from lib.logger import logger
+from schema.enum import ScheduleStatus
 from schema.schedule import Candidate, ScheduleMaster
-from src.lib.logger import logger
-import re
+from schema.user import VisitUserSchedule
 
 
-def get_schedule_from_chouseisan(chouseisan_id: str) -> Optional[ScheduleMaster]:
-    """調整さんの ID から CSV データを取得し、整形したデータフレームを返す"""
+def get_schedule_from_chouseisan(
+    chouseisan_id: str,
+) -> Optional[Tuple[ScheduleMaster, Dict[str, List[VisitUserSchedule]]]]:
+    """調整さんの ID から CSV データを取得し、スケジュール情報を取得する"""
 
     raw_csv = fetch_chouseisan(chouseisan_id)
     if raw_csv is None:
@@ -27,7 +34,9 @@ def get_schedule_from_chouseisan(chouseisan_id: str) -> Optional[ScheduleMaster]
         groups=[],
     )
 
-    return schedule_master
+    visit_users_schedule = extract_visit_users_schedule(df)
+
+    return schedule_master, visit_users_schedule
 
 
 def fetch_chouseisan(chouseisan_id: str) -> Optional[str]:
@@ -36,7 +45,6 @@ def fetch_chouseisan(chouseisan_id: str) -> Optional[str]:
     if chouseisan_id is None or len(chouseisan_id) == 0:
         raise ValueError("invalid chouseisan ID")
     chouseisan_url_format = (
-        # "https://chouseisan.com/schedule/List/createCsv?h={}&charset=utf-8&row=member"
         "https://chouseisan.com/schedule/List/createCsv?h={}&charset=utf-8&row=choice"
     )
     url = chouseisan_url_format.format(chouseisan_id)
@@ -83,3 +91,47 @@ def extract_candidates(df: pd.DataFrame) -> List[Candidate]:
     candidates = [Candidate(date=c, group=None) for c in parsed_candidates]
 
     return candidates
+
+
+def extract_visit_users_schedule(
+    df: pd.DataFrame,
+) -> Dict[str, List[VisitUserSchedule]]:
+    """データフレームから訪問メンバーの日程を抽出する
+
+    Returns: dict(名前 -> 日程のリスト)
+    """
+
+    visit_schedules = {}
+    candidates_col = df["日程"].tolist()[:-1]  # 最終行はコメントなので除外
+    colmuns = df.columns
+    for name in colmuns[1:]:
+        print("%", name)
+        row = df[name].tolist()[:-1]  # 最終行はコメントなので除外
+        schedules = [
+            VisitUserSchedule(
+                candidate=parse_date(candidates_col[i]),
+                status=parse_schedule_status(v).value,
+            )
+            for i, v in enumerate(row)
+        ]
+        formatted_name = format_name(name)
+        visit_schedules[formatted_name] = schedules
+
+    return visit_schedules
+
+
+def parse_schedule_status(v: str) -> ScheduleStatus:
+    """調整さんの日程ステータスを変換する
+
+    - ◯ → ScheduleStatus.preferred
+    - △ → ScheduleStatus.available
+    - × →  ScheduleStatus.unavailable
+    """
+    if v == "◯":
+        return ScheduleStatus.preferred
+    elif v == "△":
+        return ScheduleStatus.available
+    else:
+        if v != "×":
+            logger.warning("unknown schedule status: %s", v)
+        return ScheduleStatus.unavailable

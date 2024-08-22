@@ -1,19 +1,19 @@
-import { FC, useState } from "react";
+import Link from "next/link";
+import { FC, useMemo, useState } from "react";
 import { MdSync } from "react-icons/md";
 
 import MemberItem from "#/member/member-item";
 import { useMember } from "@/api/useMember";
 import InputWithButton from "@/components/input/input-with-button";
 import { spreadsheetIdSchema } from "@/schema/id";
-import { VisitUser } from "@/schema/user";
 
 const MemberPage: FC = () => {
   const spreadSheetExample =
     "https://docs.google.com/spreadsheets/d/1yVR0FWdVUVEIKwNdyb-WGY-d_cZOD4-dGip2g-4GzCU/edit?usp=sharing";
   const [googleSpreadSheetLink, setGoogleSpreadSheetLink] = useState<string>("");
-  const { syncSpreadsheetMember } = useMember();
+  const { syncSpreadsheetMember, fetchAllMembers } = useMember();
 
-  const [visitUsers, setVisitUsers] = useState<VisitUser[]>([]);
+  const visitUsers = useMemo(() => fetchAllMembers.data ?? [], [fetchAllMembers.data]);
 
   const syncSpreadsheetHandler = (spreadsheetLink: string) => {
     const { data: spradsheetId, success } = spreadsheetIdSchema.safeParse(spreadsheetLink);
@@ -25,8 +25,9 @@ const MemberPage: FC = () => {
 
     syncSpreadsheetMember
       .trigger({ data: { spreadsheet_id: spradsheetId } })
-      .then((data) => {
-        setVisitUsers(data);
+      .then((result) => {
+        fetchAllMembers.refetch();
+        alert(`メンバー情報を同期しました。追加: ${result.added} 件、更新: ${result.updated} 件`);
       })
       .catch((error) => {
         console.error(error);
@@ -55,9 +56,9 @@ const MemberPage: FC = () => {
               <span className="font-medium">・同一の氏名、入会期のメンバーは上書きされます。</span>
               <br />
               ・スプレッドシートで氏名、入会期、性別、直近の訪問、運転、担当カラムを用意し、必要な情報を記入します。
-              <a href={spreadSheetExample} target="_blank" className="underline">
+              <Link href={spreadSheetExample} target="_blank" className="underline">
                 こちら
-              </a>
+              </Link>
               のスプレッドシートを参考にしてください。
               <br />
               ・スプレッドシートの共有権限はすべてのユーザーが閲覧できる状態にしてください。

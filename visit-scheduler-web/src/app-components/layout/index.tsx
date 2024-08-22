@@ -11,7 +11,7 @@ const Layout: FC<{ children: ReactNode }> = ({ children }) => {
       <Header />
       <div className="flex h-[calc(100vh-7rem)] w-full grow flex-col-reverse sm:h-[calc(100vh-4rem)] sm:flex-row">
         <Navigation />
-        <div className="flex w-full items-center justify-center overflow-y-scroll">{children}</div>
+        <div className="flex w-full grow items-center justify-center overflow-y-scroll">{children}</div>
       </div>
     </div>
   );

@@ -41,3 +41,10 @@ export const visitUserSchema = z.object({
 });
 
 export type VisitUser = z.infer<typeof visitUserSchema>;
+
+export const syncVisitUserResultSchema = z.object({
+  added: z.number(),
+  updated: z.number(),
+});
+
+export type SyncVisitUserResult = z.infer<typeof syncVisitUserResultSchema>;

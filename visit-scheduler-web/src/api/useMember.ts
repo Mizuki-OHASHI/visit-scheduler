@@ -1,10 +1,14 @@
-import { useMutation } from "@/api/useApi";
+import { useFetch, useMutation } from "@/api/useApi";
 import { SpreadsheetId } from "@/schema/id";
-import { VisitUser, visitUserSchema } from "@/schema/user";
+import { SyncVisitUserResult, syncVisitUserResultSchema, VisitUser, visitUserSchema } from "@/schema/user";
 
 export const useMember = () => ({
-  syncSpreadsheetMember: useMutation<{ spreadsheet_id: SpreadsheetId }, VisitUser[]>(["member", "spreadsheet"], {
-    schema: visitUserSchema.array(),
-    inQuery: true,
-  }),
+  syncSpreadsheetMember: useMutation<{ spreadsheet_id: SpreadsheetId }, SyncVisitUserResult>(
+    ["member", "spreadsheet"],
+    {
+      schema: syncVisitUserResultSchema,
+      inQuery: true,
+    },
+  ),
+  fetchAllMembers: useFetch<VisitUser[]>(["member"], visitUserSchema.array()),
 });

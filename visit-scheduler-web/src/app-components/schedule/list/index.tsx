@@ -17,7 +17,7 @@ const ScheduleListPage: FC = () => {
         <ScheduleRegister refetchSchedules={() => fetchAllSchedule.refetch()} />
       </details>
       <div className="mb-8 mt-12 text-2xl">【 スケジュール一覧 】</div>
-      <div className="flex w-full flex-col space-y-4">
+      <div className="flex w-full flex-col space-y-4 pb-16">
         {schedules.map((schedule) => (
           <ScheduleListItem key={schedule.chouseisan_id} onClick={() => {}} schedule={schedule} />
         ))}

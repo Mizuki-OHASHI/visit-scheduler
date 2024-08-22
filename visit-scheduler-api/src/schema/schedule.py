@@ -1,9 +1,8 @@
+from datetime import date, datetime
 from typing import List, Optional
 
-from click import group
 from lib.datetime import date_to_datetime
-from src.schema.config import VSBaseModel
-from datetime import date, datetime
+from schema.config import VSBaseModel
 
 
 # NOTE: firesotore
@@ -102,3 +101,8 @@ class ScheduleMasterDto(VSBaseModel):
             candidates=candidates,
             groups=groups,
         )
+
+
+class SyncChouseisanResult(VSBaseModel):
+    schedule_master: ScheduleMaster
+    diff_visit_users: List[str]

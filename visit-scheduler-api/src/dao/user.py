@@ -1,10 +1,11 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from google.cloud.firestore import Client
 
-from lib.cache import LRUCache
 from dao.dao import Dao
-from schema.user import AppUser, VisitUser, VisitUserDto
+from lib.cache import LRUCache
 from lib.logger import logger
+from schema.user import AppUser, VisitUser, VisitUserDto
 
 app_user_cache = LRUCache(10, lambda v: isinstance(v, AppUser))
 
@@ -55,7 +56,7 @@ class AppUserDao(Dao):
         return None
 
 
-visit_user_cache = LRUCache(200, lambda v: isinstance(v, VisitUser))
+visit_user_cache = LRUCache(300, lambda v: isinstance(v, VisitUser))
 
 allowed_fields_ls = [
     "name",
@@ -140,6 +141,22 @@ class VisitUserDao(Dao):
         except Exception as e:
             logger.error("failed to fetch visit user ids: %s", e)
             return []
+
+        # 過半数がキャッシュされていない場合は全件取得
+        if visit_user_cache.size() < visit_user_count // 2:
+            users = self.col_ref.stream()
+            visit_users = [
+                VisitUserDto.model_validate(user.to_dict()).to_model() for user in users
+            ]
+            visit_user_cache.clear()
+            for visit_user in visit_users:
+                visit_user_cache.set(visit_user.id, visit_user)
+            logger.info(
+                "all visit users are refetched since cached count %d is less than half of total count %d",
+                visit_user_cache.size(),
+                visit_user_count,
+            )
+            return visit_users
 
         visit_users = []
         cached_user_count = 0

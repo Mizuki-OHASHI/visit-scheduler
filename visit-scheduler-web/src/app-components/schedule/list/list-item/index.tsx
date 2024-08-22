@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { FC } from "react";
+import { HiOutlineExternalLink } from "react-icons/hi";
 import { MdSync } from "react-icons/md";
 import { TbAdjustments } from "react-icons/tb";
 
@@ -16,7 +18,7 @@ const ScheduleListItem: FC<ScheduleListItemProps> = ({ schedule, onClick }) => {
     <div className="w-full">
       <div className="flex w-full items-center justify-between border-b border-gray-700 px-4">
         <div>{schedule.title}</div>
-        <div>
+        <div className="hidden sm:block">
           {[
             sortedCandidates[0].date.format("M/D"),
             "〜",
@@ -24,13 +26,15 @@ const ScheduleListItem: FC<ScheduleListItemProps> = ({ schedule, onClick }) => {
           ].join(" ")}
         </div>
         <div className="flex h-8 items-center space-x-2">
-          <IconButton
-            onClick={() => {
-              console.log("adj");
-            }}
-          >
-            <TbAdjustments size={20} />
-          </IconButton>
+          <Link href={`/schedule/adjustment/${schedule.chouseisan_id}`}>
+            <IconButton
+              onClick={() => {
+                console.log("adj");
+              }}
+            >
+              <TbAdjustments size={20} />
+            </IconButton>
+          </Link>
           <IconButton
             onClick={() => {
               console.log("sync");
@@ -38,6 +42,15 @@ const ScheduleListItem: FC<ScheduleListItemProps> = ({ schedule, onClick }) => {
           >
             <MdSync size={20} />
           </IconButton>
+          <Link href={`https://chouseisan.com/s?h=${schedule.chouseisan_id}`} target="_blank">
+            <IconButton
+              onClick={() => {
+                console.log("adj");
+              }}
+            >
+              <HiOutlineExternalLink size={20} />
+            </IconButton>
+          </Link>
         </div>
       </div>
     </div>

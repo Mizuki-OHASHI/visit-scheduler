@@ -1,5 +1,6 @@
 from typing import Optional
 from venv import logger
+
 from google.cloud.firestore import Client
 
 from dao.dao import Dao

@@ -1,12 +1,10 @@
 from datetime import date, datetime
-from enum import Enum
 from typing import List, Optional
 
-from numpy import piecewise
 from pandas import to_datetime
 
-from src.schema.enum import AppUserRole, DriverLevel, Gender, ScheduleStatus
-from src.schema.config import VSBaseModel
+from schema.config import VSBaseModel
+from schema.enum import AppUserRole, DriverLevel, Gender, ScheduleStatus
 
 ############ App User ############
 
@@ -69,10 +67,14 @@ class VisitUserDto(VisitUser):
 
 
 class VisitUserSchedule(VSBaseModel):
-    schdule_id: str
+    candidate: date
     status: ScheduleStatus
-    remarks: Optional[str]
 
 
 class VisitUserWithSchedule(VisitUser):
     schedules: List[VisitUserSchedule]
+
+
+class SyncVisitUserResult(VSBaseModel):
+    added: int
+    updated: int

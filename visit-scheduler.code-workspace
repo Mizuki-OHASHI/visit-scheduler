@@ -18,13 +18,21 @@
     "editor.formatOnPaste": true,
     "editor.formatOnType": true,
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
+      "source.fixAll.eslint": "always",
+      "source.organizeImports": "always",
+      "source.unusedImports": "always"
     },
     "files.associations": {
       "*.css": "tailwindcss"
     },
     "python.analysis.indexing": true,
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+    "[python]": {
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "always",
+        "source.unusedImports": "always"
+      }
+    }
   },
   "extensions": {
     "recommendations": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]

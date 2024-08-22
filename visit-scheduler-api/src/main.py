@@ -5,11 +5,10 @@ from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+from dao.user import AppUserDao
+from lib.firebase import get_verify_token
 from lib.logger import logger
-from src.dao.user import AppUserDao
-from src.router import router_list
-from src.lib.firebase import get_verify_token
-
+from router import router_list
 
 app = FastAPI()
 

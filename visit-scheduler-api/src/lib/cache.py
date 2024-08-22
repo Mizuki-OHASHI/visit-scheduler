@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from typing import Any, Callable, Optional
-from src.lib.logger import logger
+
+from lib.logger import logger
 
 
 class LRUCache:
@@ -31,6 +32,13 @@ class LRUCache:
         self.cache[key] = value
         if len(self.cache) > self.capacity:
             self.cache.popitem(last=False)
+
+    def delete(self, key: str):
+        if key in self.cache:
+            del self.cache[key]
+
+    def clear(self):
+        self.cache.clear()
 
     def size(self):
         return len(self.cache)

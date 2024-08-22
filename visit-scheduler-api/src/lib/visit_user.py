@@ -51,3 +51,13 @@ def group_by_entry_cohort(visit_users: List[VisitUser]) -> dict[int, List[VisitU
         grouped[user.entry_cohort].append(user)
 
     return grouped
+
+
+def diff_visit_users_names(
+    visit_users_names: List[str], saved_visit_users: List[VisitUser]
+) -> List[str]:
+    """DB に保存されているメンバー名以外のメンバー名を返す"""
+
+    saved_names = {user.name for user in saved_visit_users}
+
+    return [name for name in visit_users_names if name not in saved_names]
