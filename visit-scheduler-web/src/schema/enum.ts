@@ -17,17 +17,45 @@ export const driverLevelArr = ["unable", "beginner", "intermediate", "advanced"]
  * @property unable - 運転不可
  * @property beginner - 初心者
  * @property intermediate - 独り立ち
- * @property advanced - 独りでも安心
+ * @property advanced - 熟練
  */
 export const driverLevelSchema = z.enum(driverLevelArr);
 
 export type DriverLevel = z.infer<typeof driverLevelSchema>;
 
+export const driverLevelJa = (l: DriverLevel) => {
+  switch (l) {
+    case "unable":
+      return "不可";
+    case "beginner":
+      return "初心者";
+    case "intermediate":
+      return "独り立ち";
+    case "advanced":
+      return "熟練";
+    default:
+      return "-";
+  }
+};
+
 //////////////////////// Gender ////////////////////////
 
-export const genderSchema = z.enum(["female", "male", "other"]);
+export const genderArr = ["female", "male", "other"] as const;
+
+export const genderSchema = z.enum(genderArr);
 
 export type Gender = z.infer<typeof genderSchema>;
+
+export const genderJa = (g: Gender) => {
+  switch (g) {
+    case "female":
+      return "女";
+    case "male":
+      return "男";
+    default:
+      return "-";
+  }
+};
 
 //////////////////////// Schedule Status ////////////////////////
 
@@ -42,3 +70,16 @@ export const scheduleStatusArr = ["preferred", "available", "unavailable"] as co
 export const scheduleStatusSchema = z.enum(scheduleStatusArr);
 
 export type ScheduleStatus = z.infer<typeof scheduleStatusSchema>;
+
+export const scheduleStatusJa = (s: ScheduleStatus) => {
+  switch (s) {
+    case "preferred":
+      return "○";
+    case "available":
+      return "△";
+    case "unavailable":
+      return "×";
+    default:
+      return "-";
+  }
+};

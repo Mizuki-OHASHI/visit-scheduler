@@ -1,38 +1,150 @@
-from typing import Optional, List, Dict, Any
+from typing import Optional, List
+from google.cloud.firestore import Client
+
+from src.lib.cache import LRUCache
 from src.dao.dao import Dao
-from src.schema.user import AppUser
+from src.schema.user import AppUser, VisitUser
+from src.lib.logger import logger
+
+app_user_cache = LRUCache(10, lambda v: isinstance(v, AppUser))
 
 
 class AppUserDao(Dao):
-    def __init__(self, db):
+    def __init__(self, db: Client = None):
         col_name = "app_user"
-        super().__init__(db, col_name)
+        super().__init__(col_name, db=db)
 
     def create(self, app_user: AppUser) -> None:
         doc_ref = self.col_ref.document(app_user.id)
         doc_ref.set(app_user.model_dump(), merge=True)
+        app_user_cache.set(app_user.id, app_user)
         return
 
     def update(self, app_user: AppUser, feilds: List[str]) -> List[str]:
         """
         params:
-            `fields`: list of fields to update (allowed fields: `display_name`, `role`)
-        returns the fields that were updated
+            `fields`: 更新するフィールド (更新可能なフィールド: `display_name`, `role`)
+        return:
+            更新したフィールドのリスト
         """
+
         allowed_fields = set(["display_name", "role"])
         feilds_to_update = [field for field in feilds if field in allowed_fields]
-        # if no fields to update
         if len(feilds) == 0:
             return []
 
         doc_ref = self.col_ref.document(app_user.id)
         obj_to_update = {field: getattr(app_user, field) for field in feilds_to_update}
         doc_ref.update(obj_to_update)
+        app_user_cache.set(app_user.id, app_user)
         return feilds_to_update
 
     def get_by_id(self, app_user_id: str) -> Optional[AppUser]:
-        doc_ref = self.collection.document(app_user_id)
+        cached_user = app_user_cache.get(app_user_id)
+        if cached_user:
+            return cached_user
+
+        doc_ref = self.col_ref.document(app_user_id)
         doc = doc_ref.get()
         if doc.exists:
-            return AppUser.model_validate(doc.to_dict())
+            user = AppUser.model_validate(doc.to_dict())
+            app_user_cache.set(app_user_id, user)
+            return user
+
         return None
+
+
+visit_user_cache = LRUCache(200, lambda v: isinstance(v, VisitUser))
+
+
+class VisitUserDao(Dao):
+    def __init__(self, db=None):
+        col_name = "visit_user"
+        super().__init__(col_name, db=db)
+
+    def create(self, visit_user: VisitUser) -> None:
+        doc_ref = self.col_ref.document(visit_user.id)
+        doc_ref.set(visit_user.model_dump(), merge=True)
+        return
+
+    def create_many(self, visit_users: List[VisitUser]) -> None:
+        for visit_user in visit_users:
+            doc_ref = self.col_ref.document(visit_user.id)
+            doc_ref.set(visit_user.model_dump(), merge=True)
+
+        logger.info("created %d visit users", len(visit_users))
+        return
+
+    def update(self, visit_user: VisitUser, feilds: List[str]) -> List[str]:
+        """
+        params:
+            `fields`: 更新するフィールド (更新可能なフィールド: `display_name`, `role`)
+        return:
+            更新したフィールドのリスト
+        """
+
+        allowed_fields = set(
+            [
+                "name",
+                "last_visit",
+                "entry_cohort",
+                "gender",
+                "driver_level",
+                "responsible_tasks",
+                "app_user_id",
+            ]
+        )
+        feilds_to_update = [field for field in feilds if field in allowed_fields]
+        if len(feilds) == 0:
+            return []
+
+        doc_ref = self.col_ref.document(visit_user.id)
+        obj_to_update = {
+            field: getattr(visit_user, field) for field in feilds_to_update
+        }
+        doc_ref.update(obj_to_update)
+        visit_user_cache.set(visit_user.id, visit_user)
+        return feilds_to_update
+
+    def get_by_id(self, visit_user_id: str) -> Optional[VisitUser]:
+        cached_user = visit_user_cache.get(visit_user_id)
+        if cached_user:
+            return cached_user
+
+        doc_ref = self.col_ref.document(visit_user_id)
+        doc = doc_ref.get()
+        if doc.exists:
+            user = VisitUser.model_validate(doc.to_dict())
+            visit_user_cache.set(visit_user_id, user)
+            return user
+
+        return None
+
+    def get_all_visit_users(self) -> List[VisitUser]:
+        visit_user_count = self.col_ref.count()
+        if visit_user_count == visit_user_cache.size():
+            logger.info("all visit users are cached (count: %d)", visit_user_count)
+            return visit_user_cache.list_values()
+
+        try:
+            visit_user_ids = [doc.id for doc in self.col_ref.list_documents()]
+        except Exception as e:
+            logger.error("failed to fetch visit user ids: %s", e)
+
+        visit_users = []
+        cached_user_count = 0
+        for visit_user_id in visit_user_ids:
+            cached_user = visit_user_cache.get(visit_user_id)
+            if cached_user:
+                visit_users.append(cached_user)
+                cached_user_count += 1
+                continue
+            user = self.get_by_id(visit_user_id)
+            if user:
+                visit_users.append(user)
+                visit_user_cache.set(visit_user_id, user)
+
+        logger.info(
+            "out of %d visit users, %d are cached", visit_user_count, cached_user_count
+        )
+        return visit_users

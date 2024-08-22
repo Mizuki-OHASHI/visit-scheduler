@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { AiOutlineUser } from "react-icons/ai";
+import { HiOutlineUserGroup } from "react-icons/hi2";
 import { RiCalendar2Line, RiDashboardLine } from "react-icons/ri";
 import { TbAdjustments } from "react-icons/tb";
 
@@ -13,8 +14,13 @@ const Navigation: FC = () => {
       Icon: <RiDashboardLine size={24} color="gray" />,
     },
     {
-      path: "/schedule/input",
-      label: "スケジュール入力",
+      path: "/member",
+      label: "メンバー情報",
+      Icon: <HiOutlineUserGroup size={24} color="gray" />,
+    },
+    {
+      path: "/schedule/list",
+      label: "スケジュール一覧",
       Icon: <RiCalendar2Line size={24} color="gray" />,
     },
     {

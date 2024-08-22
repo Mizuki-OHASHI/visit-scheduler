@@ -1,7 +1,7 @@
-import { useFetch, useMutation } from "@/api/useApi";
-import { AppUser, appUserSchema } from "@/schema/user";
+import { useMutation, useDeferredFetch } from "@/api/useApi";
+import { AppUser, AppUserBase, appUserSchema } from "@/schema/user";
 
 export const useMe = () => ({
-  fetchMe: useFetch<AppUser>(["me"], appUserSchema),
-  createMe: useMutation<AppUser>(["me"], {}),
+  fetchMe: useDeferredFetch<AppUser>(["me"], appUserSchema),
+  createMe: useMutation<AppUserBase>(["me"], {}),
 });

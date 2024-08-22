@@ -1,5 +1,4 @@
 // Import the functions you need from the SDKs you need
-import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -20,6 +19,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-export const fireAnalytics = getAnalytics(app);
+// export const fireAnalytics = getAnalytics(app);
+// @firebase/analytics: Analytics: Firebase Analytics is not supported in this environment.
+// Wrap initialization of analytics in analytics.isSupported() to prevent initialization in unsupported environments.
 
 export const fireAuth = getAuth(app);

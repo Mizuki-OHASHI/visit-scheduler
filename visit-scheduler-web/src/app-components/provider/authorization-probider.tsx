@@ -29,14 +29,14 @@ const VSAuthZProvider = ({ children }: { children: ReactNode }) => {
 
     switch (role) {
       case "user":
-        if (!AUTHORIZED_ROUTES.user.some((route) => path.startsWith(route))) router.push("/");
+        if (!AUTHORIZED_ROUTES.user.some((route) => path.startsWith(route))) router.replace("/");
         break;
       case "admin":
         if (
           !AUTHORIZED_ROUTES.admin.some((route) => path.startsWith(route)) &&
           !AUTHORIZED_ROUTES.user.some((route) => path.startsWith(route))
         )
-          router.push("/");
+          router.replace("/");
         break;
       case "dev":
         break;
@@ -45,7 +45,7 @@ const VSAuthZProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userCtx, user]);
+  }, [userCtx, user, path]);
 
   return <>{children}</>;
 };

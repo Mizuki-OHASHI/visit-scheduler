@@ -22,7 +22,9 @@
     },
     "files.associations": {
       "*.css": "tailwindcss"
-    }
+    },
+    "python.analysis.indexing": true,
+    "python.analysis.autoImportCompletions": true
   },
   "extensions": {
     "recommendations": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]

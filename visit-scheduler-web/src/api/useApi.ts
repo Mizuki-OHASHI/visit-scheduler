@@ -35,7 +35,7 @@ export const useFetch = <T>(path: string[], schema: z.ZodSchema) => {
  * - `tyoe T = z.infer<typeof schema>`
  * - **データ取得は手動でトリガーする**
  */
-export const useDeferredFetch = <T>(path: string[], schema: z.ZodSchema) => {
+export const useDeferredFetch = <T>(path: (string | null)[], schema: z.ZodSchema) => {
   const fetcher = async (url: string) => {
     const response = await fetch(url, { headers: { ...(await newBearerTokenHeader()) } });
     const rawData = await response.json();
@@ -67,19 +67,23 @@ export const useMutation = <V = Record<string, never>, T = null>(
   {
     schema = z.null(),
     method = "POST",
+    inQuery = false,
   }: {
     schema?: z.ZodSchema;
     method?: HttpMehtod;
+    inQuery?: boolean;
   },
 ) => {
   const fetcher = async (url: string, { arg }: { arg: { data?: V } | undefined }) => {
-    const response = await fetch(url, {
+    const query = arg?.data && inQuery ? new URLSearchParams(arg.data).toString() : "";
+    const urlWithQuery = query ? `${url}?${query}` : url;
+    const response = await fetch(urlWithQuery, {
       method,
       headers: {
         ...(await newBearerTokenHeader()),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(arg?.data),
+      body: !inQuery ? JSON.stringify(arg?.data) : undefined,
     });
 
     if (response.status === 404) throw new Error(`api not found: ${url}`);
@@ -104,4 +108,5 @@ const newBearerTokenHeader = async (): Promise<{ Authorization: string }> => {
 };
 
 const baseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT_ROOT;
-const newUrl = (path: string[]) => [baseUrl, ...path].join("/").replaceAll("//", "/").replace(":/", "://");
+const newUrl = (path: (string | null)[]) =>
+  path.includes(null) ? null : [baseUrl, ...path].join("/").replaceAll("//", "/").replace(":/", "://");

@@ -28,10 +28,13 @@ const InputWithButton: FC<InputWithButtonProps> = ({
         placeholder={placeholder}
       />
       <button
-        className={cn("flex aspect-square h-full items-center justify-center border-slate-700 hover:bg-slate-50/5", {
-          "border-r": buttonPosition === "l",
-          "border-l": buttonPosition === "r",
-        })}
+        className={cn(
+          "flex aspect-square h-full items-center justify-center border-slate-700 hover:bg-slate-50/5 px-2",
+          {
+            "border-r": buttonPosition === "l",
+            "border-l": buttonPosition === "r",
+          },
+        )}
         onClick={() => onClick(value)}
       >
         {buttonIcon}

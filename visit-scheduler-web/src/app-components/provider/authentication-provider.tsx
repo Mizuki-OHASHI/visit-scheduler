@@ -26,15 +26,25 @@ const VSAuthNProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (pathname === "/auth/signup") return;
+    if (pathname === "/auth/signup") {
+      if (!userCtx?.fetchMe.data && !userCtx?.fetchMe.error) {
+        me.fetchMe.trigger().then((data) =>
+          setUserCtx({
+            ...me,
+            fetchMe: { ...me.fetchMe, data },
+          }),
+        );
+        return;
+      }
+    }
     const googleAccount = fireAuth.currentUser;
     if (googleAccount === null) {
       resetUserCtx();
       return;
     }
     if (googleAccount) {
-      if (!userCtx)
-        me.fetchMe.refetch().then((data) =>
+      if (!userCtx?.fetchMe.data)
+        me.fetchMe.trigger().then((data) =>
           setUserCtx({
             ...me,
             fetchMe: { ...me.fetchMe, data },
@@ -46,13 +56,13 @@ const VSAuthNProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      {userCtx || pathname.startsWith("/auth") ? (
+      {userCtx?.fetchMe.data || pathname.startsWith("/auth") ? (
         <>{children}</>
       ) : (
-        <div>
-          <div className="absolute bottom-1/3 z-10 w-screen text-center">
-            <Link href="/login">ログイン</Link>
-          </div>
+        <div className="flex h-screen w-screen items-center justify-center">
+          <Link href="/auth/login" className="underline">
+            ログイン
+          </Link>
         </div>
       )}
     </>

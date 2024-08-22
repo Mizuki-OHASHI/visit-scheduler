@@ -7,12 +7,17 @@ import { appUserIdSchema, taskIdSchema, visitScheduleIdSchema, visitUserIdSchema
 
 ////////////////////// AppUser ////////////////////////
 
-export const appUserSchema = z.object({
-  id: appUserIdSchema,
+export const appUserBaseSchema = z.object({
   user_name: z.string(),
   display_name: z.string(),
   email: z.string().email(),
   role: userRoleSchema,
+});
+
+export type AppUserBase = z.infer<typeof appUserBaseSchema>;
+
+export const appUserSchema = appUserBaseSchema.extend({
+  id: appUserIdSchema,
   created_at: datetimeSchema,
 });
 

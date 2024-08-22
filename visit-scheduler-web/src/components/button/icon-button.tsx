@@ -13,10 +13,10 @@ const IconButton: FC<IconButtonProps> = ({ children, onClick, size = "md" }) => 
   return (
     <button
       onClick={onClick}
-      className={cn("rounded-full hover:bg-slate-100/50", {
-        "size-12": size === "sm",
-        "size-16": size === "md",
-        "size-20": size === "lg",
+      className={cn("rounded-full hover:bg-slate-100/5 flex items-center justify-center", {
+        "size-8": size === "sm",
+        "size-10": size === "md",
+        "size-12": size === "lg",
       })}
     >
       {children}
