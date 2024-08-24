@@ -5,5 +5,7 @@ WORKDIR /usr/src/app
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY ./src ./src
+
 CMD ["uvicorn", "src.main:app", "--reload", "--port", "8000"]
 # CMD tail -f /dev/null
