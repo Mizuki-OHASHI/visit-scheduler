@@ -1,0 +1,13 @@
+version: "3"
+services:
+  api:
+    platform: linux/x86_64
+    build:
+      #同じ階層のDockerfileを指定
+      context: .
+    volumes:
+      # ホストとコンテナを同期
+      - .:/usr/src/app
+    ports:
+      # ホストとコンテナのポートを同期
+      - 8000:8000
