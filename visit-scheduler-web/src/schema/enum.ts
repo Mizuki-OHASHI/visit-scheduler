@@ -104,3 +104,30 @@ export const comparisonOperatorJa = (o: ComparisonOperator) => {
       return "-";
   }
 };
+
+//////////////////////// Optimization Status ////////////////////////
+
+export const optimizationStatusArr = ["optimal", "infeasible", "failed"] as const;
+
+/**
+ * 最適化ステータス
+ * @property optimal - 最適解
+ * @property infeasible - 解なし
+ * @property failed - 失敗
+ */
+export const optimizationStatusSchema = z.enum(optimizationStatusArr);
+
+export type OptimizationStatus = z.infer<typeof optimizationStatusSchema>;
+
+export const optimizationStatusJa = (s: OptimizationStatus) => {
+  switch (s) {
+    case "optimal":
+      return "最適解";
+    case "infeasible":
+      return "解なし";
+    case "failed":
+      return "失敗";
+    default:
+      return "-";
+  }
+};

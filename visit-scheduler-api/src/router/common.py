@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Request, logger, status, Response
+from fastapi import APIRouter, Request, Response, logger, status
 
 from dao.common import CommonDao
 from dao.optimize_config import OptimizeConfigDao
 from dao.user import VisitUserDao
 from lib.actor import get_actor_from_state
+from lib.logger import logger
 from schema.common import Common
 from schema.enum import AppUserRole
-from lib.logger import logger
-
 
 router = APIRouter(tags=["common"])
 

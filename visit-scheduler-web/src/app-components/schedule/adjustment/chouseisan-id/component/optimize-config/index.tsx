@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 
+import OptimizeConfigByCandidate from "#/schedule/adjustment/chouseisan-id/component/optimize-config/config-by-candidate";
 import BasicButton from "@/components/button/basic-button";
 import IconButton from "@/components/button/icon-button";
 import NumberArrayInput from "@/components/input/number-array-input";
@@ -9,7 +10,6 @@ import BasicSelect from "@/components/select/basic-select";
 import CheckBox from "@/components/select/check-box";
 import { ComparisonOperator, comparisonOperatorArr, comparisonOperatorJa } from "@/schema/enum";
 import { ConstraintsByCandidate, EntryCohortConstraint, OptimizeConfig } from "@/schema/schedule";
-import OptimizeConfigByCandidate from "./config-by-candidate";
 
 type ScheduleOptimizeConfigProps = {
   config: OptimizeConfig;
@@ -75,20 +75,20 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
   };
 
   return (
-    <div className="flex w-full flex-col space-y-4 pb-16">
+    <div className="flex w-full flex-col space-y-4">
       <ul className="w-full list-disc px-8 py-2">
         <li>最適化する際に考慮する制約を設定します。</li>
         <li>数値は半角数字で入力してください。</li>
         <li>あまりたくさんの条件を入れすぎると、解なしになるので注意してください。</li>
         <li>下の条件だけでは制約が足りないと感じる場合は、開発者にお問い合わせください。</li>
       </ul>
-      <div className="w-full text-lg text-center">共通の設定</div>
+      <div className="w-full text-center text-lg">共通の設定</div>
       <div className="flex items-center space-x-2">
         <div className="w-40 shrink-0">入会期 人数制約</div>
         <div className="flex grow flex-col space-y-2">
           {entryCohortConstraintObj.map(([cohorts, operator, threshold], i) => (
             <div key={i} className="flex h-10 space-x-2">
-              <div className="flex grow space-x-2 items-center">
+              <div className="flex grow items-center space-x-2">
                 <NumberArrayInput
                   value={cohorts}
                   onChange={updateCohortConstraintHandler(i)}
@@ -116,7 +116,7 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
           </div>
         </div>
       </div>
-      <details className="w-full break-words text-sm px-4">
+      <details className="w-full break-words px-4 text-sm">
         <summary>
           <span className="p-2">説明</span>
         </summary>
@@ -139,7 +139,7 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
           />
         </div>
       </div>
-      <details className="w-full break-words text-sm px-4">
+      <details className="w-full break-words px-4 text-sm">
         <summary>
           <span className="p-2">説明</span>
         </summary>
@@ -159,7 +159,7 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
           />
         </div>
       </div>
-      <details className="w-full break-words text-sm px-4">
+      <details className="w-full break-words px-4 text-sm">
         <summary>
           <span className="p-2">説明</span>
         </summary>
@@ -177,7 +177,7 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
           />
         </div>
       </div>
-      <details className="w-full break-words text-sm px-4">
+      <details className="w-full break-words px-4 text-sm">
         <summary>
           <span className="p-2">説明</span>
         </summary>
@@ -190,8 +190,8 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
           </li>
         </ul>
       </details>
-      <div className="w-full text-lg text-center pt-16">候補日ごとの設定</div>
-      <details className="w-full break-words text-sm px-4">
+      <div className="w-full pt-16 text-center text-lg">候補日ごとの設定</div>
+      <details className="w-full break-words px-4 text-sm">
         <summary>
           <span className="p-2">説明</span>
         </summary>
@@ -201,14 +201,14 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
           <li>人数: この日だけの人数制約を入力します。基本メンバー数制約と異なる場合のみ入力してください。</li>
         </ul>
       </details>
-      <div className="w-full flex flex-col">
-        <div className="w-full flex text-center border-b border-slate-700 px-4 h-10 items-center">
+      <div className="flex w-full flex-col">
+        <div className="flex h-10 w-full items-center border-b border-slate-700 px-4 text-center">
           <div className="w-1/6">候補日</div>
           <div className="w-1/6">グループ</div>
           <div className="w-1/2">タスク</div>
           <div className="w-1/6">人数</div>
         </div>
-        <div className="w-full flex flex-col h-[50vh] overflow-y-scroll">
+        <div className="flex h-[50vh] w-full flex-col overflow-y-scroll">
           {candidate_constraints.map((constraints, idx) => (
             <OptimizeConfigByCandidate
               key={constraints.candidate.toISOString()}
@@ -218,12 +218,12 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
             />
           ))}
         </div>
-        <div className="w-full flex items-center h-16 justify-center space-x-4">
+        <div className="flex h-16 w-full items-center justify-center space-x-4">
           <CheckBox checked={applySameRule} onChange={() => setApplySameRule(!applySameRule)} />
           <div>同じグループの候補日に対して同じルールを適用する</div>
         </div>
       </div>
-      <div className="w-full h-20 p-4">
+      <div className="h-20 w-full p-4">
         <BasicButton onClick={onSubmitHandler(activeConfig, entryCohortConstraintObj)}>条件を保存する</BasicButton>
       </div>
     </div>

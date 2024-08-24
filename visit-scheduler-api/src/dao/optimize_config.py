@@ -1,8 +1,9 @@
 from typing import Optional
+
 from dao.dao import Dao
 from lib.cache import LRUCache
-from schema.optimize_config import OptimizeConfig, OptimizeConfigDto
 from lib.logger import logger
+from schema.optimize_config import OptimizeConfig, OptimizeConfigDto
 
 optimize_config_cache = LRUCache(20, lambda v: isinstance(v, OptimizeConfig))
 

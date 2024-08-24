@@ -39,7 +39,7 @@ const ScheduleRegister: FC<ScheduleRegisterProps> = ({ refetchSchedules }) => {
       })
       .catch((error) => {
         console.error(error);
-        alert("調整さんおデータ取得に失敗しました。");
+        alert("調整さんのデータ取得に失敗しました。");
       });
   };
 

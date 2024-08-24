@@ -1,8 +1,8 @@
+import re
 from datetime import date
 from typing import List, Optional, Tuple
 
 from schema.config import VSBaseModel
-import re
 
 
 class OptimizeConfigByCandidate(VSBaseModel):
@@ -112,7 +112,7 @@ class OptimizeConfig(VSBaseModel):
 
 
 def decode_entry_cohort_constraint(text: str) -> Tuple[List[int], str, int]:
-    pattern = re.compile(r"(\d,)*\d[<=>]=\d+")
+    pattern = re.compile(r"(\d+,)*\d+[<=>]=\d+")
     if not pattern.match(text):
         raise ValueError(f"invalid format: {text}")
 

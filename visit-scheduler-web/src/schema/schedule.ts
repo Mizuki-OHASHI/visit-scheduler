@@ -3,7 +3,7 @@ import { z } from "zod";
 import { dateSchema } from "@/lib/datetime";
 import { naturalNumberSchema } from "@/schema/common";
 import { comparisonOperatorSchema } from "@/schema/enum";
-import { chouseisanIdSchema, scheduleGroupIdSchema } from "@/schema/id";
+import { chouseisanIdSchema, scheduleGroupIdSchema, visitUserIdSchema } from "@/schema/id";
 
 ////////////////////// Schedule Group ////////////////////////
 
@@ -70,6 +70,22 @@ export const optimizeConfigSchema = z.object({
 
 export type OptimizeConfig = z.infer<typeof optimizeConfigSchema>;
 
+////////////////////// Optimized Schedule ////////////////////////
+
+export const pickedDateWithMembersSchema = z.object({
+  date: dateSchema,
+  member: z.array(visitUserIdSchema),
+});
+
+export type PickedDateWithMembers = z.infer<typeof pickedDateWithMembersSchema>;
+
+export const optimizedScheduleSchema = z.object({
+  chouseisan_id: chouseisanIdSchema,
+  schedule: z.array(pickedDateWithMembersSchema),
+});
+
+export type OptimizedSchedule = z.infer<typeof optimizedScheduleSchema>;
+
 ////////////////////// Schedule With Config ////////////////////////
 
 export const scheduleWithConfigSchema = z.object({
@@ -78,6 +94,28 @@ export const scheduleWithConfigSchema = z.object({
     .optional()
     .nullable()
     .transform((r) => r ?? null),
+  optimized_schedule: optimizedScheduleSchema
+    .optional()
+    .nullable()
+    .transform((r) => r ?? null),
 });
 
 export type ScheduleWithConfig = z.infer<typeof scheduleWithConfigSchema>;
+
+////////////////////// Optimization Result ////////////////////////
+
+export const optimizationResultSchema = z
+  .object({
+    chouseisan_id: chouseisanIdSchema,
+    status: z.literal("optimal"),
+    optimized_schedule: optimizedScheduleSchema,
+  })
+  .or(
+    z.object({
+      chouseisan_id: chouseisanIdSchema,
+      status: z.literal("infeasible").or(z.literal("failed")),
+      optimized_schedule: z.null(),
+    }),
+  );
+
+export type OptimizationResult = z.infer<typeof optimizationResultSchema>;

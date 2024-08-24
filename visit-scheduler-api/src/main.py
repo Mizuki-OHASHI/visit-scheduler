@@ -9,6 +9,7 @@ from dao.user import AppUserDao
 from lib.firebase import get_verify_token
 from lib.logger import logger
 from router import router_list
+import traceback
 
 app = FastAPI()
 
@@ -137,6 +138,7 @@ async def add_process_time_header(
         response = await call_next(request)
     except Exception as e:
         logger.error("internal server error: %s", e)
+        traceback.print_exc()
         return Response(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             headers={"message": "internal server error.", "error": str(e)},

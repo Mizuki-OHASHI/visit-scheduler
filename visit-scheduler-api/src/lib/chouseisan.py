@@ -1,6 +1,6 @@
-from datetime import date
 import io
 import re
+from datetime import date
 from time import time
 from typing import Dict, List, Optional, Tuple
 
@@ -104,7 +104,6 @@ def extract_visit_users_schedule(
     candidates_col = df["日程"].tolist()[:-1]  # 最終行はコメントなので除外
     colmuns = df.columns
     for name in colmuns[1:]:
-        print("%", name)
         row = df[name].tolist()[:-1]  # 最終行はコメントなので除外
         schedules = [
             VisitUserSchedule(

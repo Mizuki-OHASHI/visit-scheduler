@@ -24,6 +24,15 @@ class DriverLevel(Enum):
     def __str__(self) -> str:
         return self.value
 
+    @property
+    def int(self) -> int:
+        return {
+            DriverLevel.unable: 0,
+            DriverLevel.beginner: 1,
+            DriverLevel.intermediate: 2,
+            DriverLevel.advanced: 3,
+        }[self]
+
 
 ############ Gender ############
 
@@ -44,6 +53,18 @@ class ScheduleStatus(Enum):
     preferred = "preferred"
     available = "available"
     unavailable = "unavailable"
+
+    def __str__(self) -> str:
+        return self.value
+
+
+############ Optimization Status ############
+
+
+class VSOptimizationStatus(Enum):
+    optimal = "optimal"
+    infeasible = "infeasible"
+    failed = "failed"
 
     def __str__(self) -> str:
         return self.value

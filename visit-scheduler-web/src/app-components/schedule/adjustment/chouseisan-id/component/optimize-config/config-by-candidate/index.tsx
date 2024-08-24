@@ -56,7 +56,7 @@ const OptimizeConfigByCandidate: FC<OprimizwConfigByCandidateProps> = ({
       <div className="w-1/6">
         <BasicInput
           value={group ?? ""}
-          onChange={(v) => onChangeConstraints({ ...constraints, group: v ?? null })}
+          onChange={(v) => onChangeConstraints({ ...constraints, group: v.trim() === "" ? null : v.trim() })}
           noBorder
         />
       </div>

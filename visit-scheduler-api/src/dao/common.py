@@ -1,4 +1,5 @@
 from google.cloud.firestore import Client
+
 from dao.dao import Dao
 from schema.common import Common
 
