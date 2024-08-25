@@ -5,6 +5,7 @@ import { RiCalendar2Line, RiDashboardLine } from "react-icons/ri";
 import { TbAdjustments } from "react-icons/tb";
 
 import NavigationItem, { type NavigationItemProps } from "#/layout/navigation/navigation-item";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 
 const Navigation: FC = () => {
   const navigationItems = [
@@ -32,6 +33,12 @@ const Navigation: FC = () => {
       path: "/me",
       label: "アカウント",
       Icon: <AiOutlineUser size={24} color="gray" />,
+    },
+
+    {
+      path: "/about",
+      label: "アプリについて",
+      Icon: <HiOutlineInformationCircle size={24} color="gray" />,
     },
   ] satisfies NavigationItemProps[];
 
