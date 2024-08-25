@@ -147,7 +147,7 @@ class VisitOptimizer(Model):
                         self.y[self.candidate_index_map[candidate.candidate]]
                         for candidate in self.candidate_group_map[group]
                     )
-                    <= 1
+                    == 1
                 )
 
     def _cons_driver(self):

@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 
 import OptimizeConfigByCandidate from "#/schedule/adjustment/chouseisan-id/component/optimize-config/config-by-candidate";
@@ -18,6 +18,7 @@ type ScheduleOptimizeConfigProps = {
 
 const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSubmit }) => {
   const [activeConfig, setActiveConfig] = useState<OptimizeConfig>(config);
+  useEffect(() => setActiveConfig(config), [config]);
   const {
     entry_cohort_constraint,
     driver_level_constraint,
@@ -27,6 +28,7 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
   } = activeConfig;
 
   const [entryCohortConstraintObj, setEntryCohortConstraintObj] = useState(entry_cohort_constraint);
+
   const [applySameRule, setApplySameRule] = useState(true);
 
   const addEntryCohortConstraintHandler = () => setEntryCohortConstraintObj((x) => [...x, [[1], "==", 1]]);
@@ -66,12 +68,24 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
     }));
   };
 
+  const isChanged = useMemo(
+    () =>
+      JSON.stringify(entry_cohort_constraint) !== JSON.stringify(entryCohortConstraintObj) ||
+      JSON.stringify(config) !== JSON.stringify(activeConfig),
+    [config, activeConfig, entry_cohort_constraint, entryCohortConstraintObj],
+  );
+
   const onSubmitHandler = (config: OptimizeConfig, entryCohortConstraint: EntryCohortConstraint) => () => {
     const configToSubmit = {
       ...config,
       entry_cohort_constraint: entryCohortConstraint,
     };
     onSubmit(configToSubmit);
+  };
+
+  const resetConfigHandler = () => {
+    setEntryCohortConstraintObj(entry_cohort_constraint.slice());
+    setActiveConfig(config);
   };
 
   return (
@@ -224,8 +238,21 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
         </div>
       </div>
       <div className="h-20 w-full p-4">
-        <BasicButton onClick={onSubmitHandler(activeConfig, entryCohortConstraintObj)}>条件を保存する</BasicButton>
+        <BasicButton onClick={onSubmitHandler(activeConfig, entryCohortConstraintObj)} disabled={!isChanged}>
+          条件を保存する
+        </BasicButton>
       </div>
+      {isChanged && (
+        <div className="flex w-full items-center justify-evenly space-x-4 px-4">
+          <span className="text-red-500">
+            条件が変更されています。
+            <br /> 保存してから最適化を実行してください。
+          </span>
+          <div className="h-12 w-48">
+            <BasicButton onClick={resetConfigHandler}>変更を破棄</BasicButton>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
