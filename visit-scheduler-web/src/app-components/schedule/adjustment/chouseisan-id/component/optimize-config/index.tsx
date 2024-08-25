@@ -243,7 +243,7 @@ const ScheduleOptimizeConfig: FC<ScheduleOptimizeConfigProps> = ({ config, onSub
         </BasicButton>
       </div>
       {isChanged && (
-        <div className="w-full items-center flex justify-evenly px-4 space-x-4">
+        <div className="flex w-full items-center justify-evenly space-x-4 px-4">
           <span className="text-red-500">
             条件が変更されています。
             <br /> 保存してから最適化を実行してください。

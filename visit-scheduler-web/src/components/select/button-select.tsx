@@ -46,16 +46,16 @@ const SelectBoxWithButton = <T extends string | number>({
         {showSelect ? icon.open : icon.close}
       </button>
       {showSelect && (
-        <div className="text-xs absolute top-6 justify-center left-0 flex flex-wrap items-start rounded-lg bg-slate-700 z-10 w-64 h-48 overflow-y-scroll p-2">
+        <div className="absolute left-0 top-6 z-10 flex h-48 w-64 flex-wrap items-start justify-center overflow-y-scroll rounded-lg bg-slate-700 p-2 text-xs">
           {options.map((option) => (
-            <div className="flex flex-wrap">
+            <div className="flex flex-wrap" key={option}>
               <button
                 key={option}
                 onClick={() => {
                   onChange(option);
                   setShowSelect(false);
                 }}
-                className="rounded-full m-0.5 px-2 py-1 bg-slate-900"
+                className="m-0.5 rounded-full bg-slate-900 px-2 py-1"
               >
                 {keyToLabel ? keyToLabel(option) : option}
               </button>
