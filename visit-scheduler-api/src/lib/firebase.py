@@ -2,7 +2,7 @@ from typing import Callable
 
 from firebase_admin import auth, credentials, firestore, initialize_app
 
-cred = credentials.Certificate("service_account_key")
+cred = credentials.Certificate("conf/service_account_key.json")
 fire_app = initialize_app(cred)
 
 
