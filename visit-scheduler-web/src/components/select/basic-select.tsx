@@ -1,3 +1,5 @@
+import cn from "classnames";
+
 type BasicSelectProps<T> = {
   value: T;
   options: T[];
@@ -14,7 +16,7 @@ const BasicSelect = <T extends string | number>({
   keyToLabel,
 }: BasicSelectProps<T>) => {
   return (
-    <div className={`flex size-full items-center rounded-xl border border-slate-700 bg-slate-900 ${className}`}>
+    <div className={cn("flex size-full items-center rounded-xl border border-slate-700 bg-slate-900", className)}>
       <select
         className="size-full bg-transparent text-center outline-none placeholder:text-slate-700"
         value={value}

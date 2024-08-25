@@ -1,10 +1,11 @@
 import { FC } from "react";
+import { FaPlus, FaTimes } from "react-icons/fa";
 
 import TaskCard from "#/schedule/adjustment/chouseisan-id/component/optimize-config/config-by-candidate/task-card.tsx";
 import { useCommon } from "@/api/useCommon";
 import BasicInput from "@/components/input/basic-input";
 import NumberInput from "@/components/input/number-input";
-import InputSelect from "@/components/select/input-select";
+import SelectBoxWithButton from "@/components/select/button-select";
 import { filterMap } from "@/lib/array";
 import { ConstraintsByCandidate } from "@/schema/schedule";
 
@@ -67,7 +68,16 @@ const OptimizeConfigByCandidate: FC<OprimizwConfigByCandidateProps> = ({
           </div>
         ))}
         <div className="m-0.5 w-16">
-          <InputSelect options={taskList} onSelect={(v) => addTask(v)} placeholder="追加" />
+          {/* <InputSelect options={taskList} onSelect={(v) => addTask(v)} placeholder="追加" /> */}
+          {/* <BasicSelect value="追加" options={taskList} onChange={(v) => addTask(v)} /> */}
+          <SelectBoxWithButton
+            options={taskList}
+            onChange={(v) => addTask(v)}
+            icon={{
+              open: <FaTimes size={16} color="gray" />,
+              close: <FaPlus size={16} color="gray" />,
+            }}
+          />
         </div>
       </div>
       <div className="w-1/6">
