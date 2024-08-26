@@ -5,15 +5,17 @@ import { VisitUser } from "@/schema/user";
 
 type VisitUserCardProps = {
   visitUser: VisitUser;
+  onClick?: () => void;
 };
 
-const VisitUserCard: FC<VisitUserCardProps> = ({ visitUser }) => {
+const VisitUserCard: FC<VisitUserCardProps> = ({ visitUser, onClick }) => {
   return (
     <div
       className={cn(
-        "flex px-1 m-0.5 min-w-24 text-sm items-center rounded-xl justify-start",
+        "flex px-1 h-5 m-0.5 min-w-24 text-sm items-center rounded-xl justify-start",
         visitUser.driver_level === "unable" ? "bg-slate-700" : "bg-slate-400 text-slate-900",
       )}
+      onClick={onClick}
     >
       <div className="flex size-4 items-center justify-center rounded-full bg-slate-900 text-xs text-slate-100">
         {visitUser.entry_cohort}

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { datetimeSchema } from "@/lib/datetime";
+import { dateSchema, datetimeSchema } from "@/lib/datetime";
 import { naturalNumberSchema } from "@/schema/common";
-import { driverLevelSchema, genderSchema, userRoleSchema } from "@/schema/enum";
+import { driverLevelSchema, genderSchema, scheduleStatusSchema, userRoleSchema } from "@/schema/enum";
 import { appUserIdSchema, taskIdSchema, visitUserIdSchema } from "@/schema/id";
 
 ////////////////////// AppUser ////////////////////////
@@ -41,6 +41,19 @@ export const visitUserSchema = z.object({
 });
 
 export type VisitUser = z.infer<typeof visitUserSchema>;
+
+export const VisitUserScheduleSchema = z.object({
+  candidate: dateSchema,
+  status: scheduleStatusSchema,
+});
+
+export type VisitUserSchedule = z.infer<typeof VisitUserScheduleSchema>;
+
+export const visitUserWithScheduleSchema = visitUserSchema.extend({
+  schedules: z.array(VisitUserScheduleSchema),
+});
+
+export type VisitUserWithSchedule = z.infer<typeof visitUserWithScheduleSchema>;
 
 ////////////////////// Sync Visit User Result ////////////////////////
 

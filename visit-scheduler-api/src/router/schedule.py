@@ -6,17 +6,19 @@ from dao.optimize_config import OptimizeConfigDao
 from dao.schedule import ScheduleMasterDao
 from dao.optimized_schedule import OptimizedScheduleDao
 from dao.user import VisitUserDao
-from lib.chouseisan import get_schedule_from_chouseisan
+from lib.chouseisan import get_schedule_from_chouseisan, get_visit_user_schedule
 from lib.logger import logger
 from lib.optimizer.main import run_visit_schedule_optimizer
 from lib.visit_user import diff_visit_users_names
 from schema.optimize_config import OptimizeConfig
 from schema.schedule import (
     OptimizationResult,
+    OptimizedSchedule,
     ScheduleMaster,
     ScheduleWithConfig,
     SyncChouseisanResult,
 )
+from schema.user import VisitUserWithSchedule
 
 router = APIRouter(tags=["schedule"])
 
@@ -152,14 +154,12 @@ def optimize_schedule(chouseisan_id: str):
 
     visit_users = visit_user_dao.get_all()
 
-    data = get_schedule_from_chouseisan(chouseisan_id)
-    if data is None:
+    visit_user_schedule = get_visit_user_schedule(chouseisan_id)
+    if visit_user_schedule is None:
         return Response(
             status_code=status.HTTP_404_NOT_FOUND,
-            headers={"message": "chouseisan data with the given ID not found."},
+            headers={"message": "visit user schedule with the given ID not found."},
         )
-
-    _, visit_user_schedule = data
 
     schedule_with_config = ScheduleWithConfig(
         schedule_master=schedule_master,
@@ -175,3 +175,48 @@ def optimize_schedule(chouseisan_id: str):
         optimized_schedule_dao.upsert(result.optimized_schedule)
 
     return result
+
+
+@router.put(
+    "/schedule/manual/{chouseisan_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+    description="手動で訪問メンバーを更新する",
+)
+def update_manual_schedule(chouseisan_id: str, manual_schedule: OptimizedSchedule):
+    if chouseisan_id != manual_schedule.chouseisan_id:
+        return Response(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            headers={"message": "chouseisan_id is inconsistent."},
+        )
+
+    optimized_schedule_dao.upsert(manual_schedule)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get(
+    "/schedule/member/{chouseisan_id}",
+    response_model=List[VisitUserWithSchedule],
+    description="メンバーの日程情報取得",
+)
+def get_member_schedule(chouseisan_id: str):
+    visit_user_schedule = get_visit_user_schedule(chouseisan_id)
+    if visit_user_schedule is None:
+        return Response(
+            status_code=status.HTTP_404_NOT_FOUND,
+            headers={
+                "message": "visit user schedule data with the given ID not found."
+            },
+        )
+
+    visit_users = visit_user_dao.get_all()
+
+    visit_users_with_schedule = [
+        VisitUserWithSchedule(
+            schedules=visit_user_schedule.get(user.name, []), **user.model_dump()
+        )
+        for user in visit_users
+    ]
+
+    return visit_users_with_schedule

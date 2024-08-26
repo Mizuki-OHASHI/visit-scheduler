@@ -2,17 +2,34 @@ import io
 import re
 from datetime import date
 from time import time
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import requests
 
+from lib.cache import LRUCache
 from lib.datetime import parse_date
 from lib.format_name import format_name
 from lib.logger import logger
 from schema.enum import ScheduleStatus
 from schema.schedule import ScheduleMaster
 from schema.user import VisitUserSchedule
+
+
+def validate_visit_user_schedule_dict(v: Any) -> bool:
+    if not isinstance(v, dict):
+        return False
+    for k in v:
+        l = v[k]
+        if not isinstance(l, list):
+            return False
+        for e in l:
+            if not isinstance(e, VisitUserSchedule):
+                return False
+    return True
+
+
+visit_user_schedule_cache = LRUCache(10, validate_visit_user_schedule_dict)
 
 
 def get_schedule_from_chouseisan(
@@ -35,8 +52,31 @@ def get_schedule_from_chouseisan(
     )
 
     visit_users_schedule = extract_visit_users_schedule(df)
+    visit_user_schedule_cache.set(chouseisan_id, visit_users_schedule)
 
     return schedule_master, visit_users_schedule
+
+
+def get_visit_user_schedule(
+    chouseisan_id: str,
+) -> Optional[Dict[str, List[VisitUserSchedule]]]:
+    """訪問メンバーのスケジュール情報を取得する
+
+    - できるだけキャッシュを使う
+    """
+
+    cached_visit_user_schedule = visit_user_schedule_cache.get(chouseisan_id)
+    if cached_visit_user_schedule:
+        return cached_visit_user_schedule
+
+    data = get_schedule_from_chouseisan(chouseisan_id)
+    if data is None:
+        return None
+
+    _, visit_users_schedule = data
+    visit_user_schedule_cache.set(chouseisan_id, visit_users_schedule)
+
+    return visit_users_schedule
 
 
 def fetch_chouseisan(chouseisan_id: str) -> Optional[str]:
