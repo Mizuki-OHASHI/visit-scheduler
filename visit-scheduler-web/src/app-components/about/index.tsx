@@ -1,3 +1,5 @@
+import { updateInfo } from "#/about/update-info";
+import { dateSchema } from "@/lib/datetime";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -108,7 +110,25 @@ const AbputPage: FC = () => {
         <div className="flex w-full">
           <div className="w-1/3 shrink-0">バージョン</div>
           <div className="grow break-words">
-            現在公開中のサービスは アルファ版 です。最適化が行われた後の手動による調整機能などの実装が予定されています。
+            <div>
+              現在公開中のサービスは アルファ版
+              です。最適化が行われた後の手動による調整機能などの実装が予定されています。
+            </div>
+          </div>
+        </div>
+        <div className="flex w-full">
+          <div className="w-1/3 shrink-0">アップデート情報</div>
+          <div className="grow break-words flex flex-col space-y-2">
+            {updateInfo.map(({ date, contents }) => (
+              <div key={date} className="flex space-x-2">
+                <div className="w-24 shrink-0">{dateSchema.parse(date).format("YY/M/D")}</div>
+                <ul className="list-disc">
+                  {contents.map((content, idx) => (
+                    <li key={idx}>{content}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </div>
