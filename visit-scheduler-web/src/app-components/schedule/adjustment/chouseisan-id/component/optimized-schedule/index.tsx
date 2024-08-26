@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { FaCopy } from "react-icons/fa";
 
 import CandidateArea from "#/schedule/adjustment/chouseisan-id/component/optimized-schedule/candidate-area";
 import VisitUserCard from "#/schedule/adjustment/chouseisan-id/component/optimized-schedule/visit-user-card";
@@ -6,7 +7,7 @@ import { useSchedule } from "@/api/useSchedule";
 import BasicButton from "@/components/button/basic-button";
 import IconButton from "@/components/button/icon-button";
 import CheckBox from "@/components/select/check-box";
-import { arrayToRecord } from "@/lib/array";
+import { arrayToRecord, filterMap } from "@/lib/array";
 import { Date } from "@/lib/datetime";
 import { ScheduleStatus } from "@/schema/enum";
 import { VisitUserId } from "@/schema/id";
@@ -17,7 +18,6 @@ import {
   PickedDateWithMembers,
 } from "@/schema/schedule";
 import { VisitUser } from "@/schema/user";
-import { FaCopy } from "react-icons/fa";
 
 type OptimizedScheduleProps = {
   optimizedSchedule: OptimizedSchedule;
@@ -131,10 +131,19 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
       });
   };
 
+  const notScheduledMembers = useMemo(() => {
+    const scheduledMembers = new Set(sortedScheduleOnEdit.flatMap((s) => s.member));
+    const answeredMembers = fetchMembersSchedule.data
+      ? filterMap(fetchMembersSchedule.data, (m) => (m.schedules.some((s) => s.status !== "unavailable") ? m.id : null))
+      : [];
+    const notScheduled = answeredMembers.filter((m) => !scheduledMembers.has(m));
+    return notScheduled;
+  }, [fetchMembersSchedule.data, sortedScheduleOnEdit]);
+
   return (
     <div className="w-full pb-96">
-      <div className="w-full flex justify-between items-center px-4 space-x-4">
-        <div className="text-center text-xl py-8 grow">訪問スケジュール</div>
+      <div className="flex w-full items-center justify-between space-x-4 px-4">
+        <div className="grow py-8 text-center text-xl">訪問スケジュール</div>
         <div className="flex space-x-2">
           <CheckBox
             checked={editMode}
@@ -179,8 +188,8 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
               optCandidate={candidate}
               consCandidate={consCandidateRecord[candidate.date.toISOString()]}
             >
-              <div className="size-full flex">
-                <div className="w-1/3 px-2 flex-col">
+              <div className="flex size-full">
+                <div className="w-1/3 flex-col px-2">
                   {candidate.member.map((member) => (
                     <VisitUserCard
                       visitUser={visitUserRecord[member]}
@@ -189,7 +198,7 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
                     />
                   ))}
                 </div>
-                <div className="w-1/3 px-2 flex-col">
+                <div className="w-1/3 flex-col px-2">
                   {membersSchedulesByDate[candidate.date.toISOString()]?.preferred
                     .filter((member) => !candidate.member.includes(member))
                     .map((member) => (
@@ -200,7 +209,7 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
                       />
                     ))}
                 </div>
-                <div className="w-1/3 px-2 flex-col">
+                <div className="w-1/3 flex-col px-2">
                   {membersSchedulesByDate[candidate.date.toISOString()]?.available
                     .filter((member) => !candidate.member.includes(member))
                     .map((member) => (
@@ -214,7 +223,7 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
               </div>
             </CandidateArea>
           ))}
-          <div className="w-full flex justify-center p-4 h-20 space-x-8">
+          <div className="flex h-20 w-full justify-center space-x-8 p-4">
             <BasicButton
               onClick={() => {
                 resetHandler();
@@ -240,6 +249,12 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
           </CandidateArea>
         ))
       )}
+      <div className="w-full py-8 text-center text-xl">訪問できない回答者</div>
+      <div className="flex w-full flex-wrap justify-center">
+        {notScheduledMembers.map((member) => (
+          <VisitUserCard visitUser={visitUserRecord[member]} key={member} />
+        ))}
+      </div>
     </div>
   );
 };
