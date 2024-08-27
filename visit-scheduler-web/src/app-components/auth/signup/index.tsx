@@ -1,19 +1,23 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
+import { useRecoilState } from "recoil";
 
 import { useMe } from "@/api/useMe";
 import AuthTemplate from "@/app-components/auth/template";
 import BasicButton from "@/components/button/basic-button";
 import BasicInput from "@/components/input/basic-input";
 import { fireAuth } from "@/config/firebase";
+import { userContextAtom } from "@/config/recoil";
 import { AppUserBase, appUserBaseSchema } from "@/schema/user";
 
 const provider = new GoogleAuthProvider();
 
 const SignupPage: FC = () => {
   const router = useRouter();
-  const { createMe } = useMe();
+  const me = useMe();
+  const { createMe, fetchMe } = me;
+  const [_, setUserCtx] = useRecoilState(userContextAtom);
 
   const [appUser, setAppUser] = useState<AppUserBase | null>(null);
 
@@ -47,7 +51,10 @@ const SignupPage: FC = () => {
       .trigger({ data: appUser })
       .then(() => {
         alert("アカウントを作成しました。");
-        router.push("/");
+        fetchMe.trigger().then((data) => {
+          setUserCtx({ ...me, fetchMe: { ...me.fetchMe, data } });
+          router.push("/");
+        });
       })
       .catch((error) => {
         console.error(error);

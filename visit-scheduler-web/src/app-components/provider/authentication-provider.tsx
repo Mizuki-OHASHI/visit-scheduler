@@ -3,7 +3,7 @@
 import { onAuthStateChanged, User } from "firebase/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useRecoilState, useResetRecoilState } from "recoil";
 
 import { useMe } from "@/api/useMe";
@@ -54,9 +54,11 @@ const VSAuthNProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [googleAccount]);
 
+  const isAuth = useMemo(() => userCtx?.fetchMe.data || pathname.startsWith("/auth"), [userCtx, pathname]);
+
   return (
     <>
-      {userCtx?.fetchMe.data || pathname.startsWith("/auth") ? (
+      {isAuth ? (
         <>{children}</>
       ) : (
         <div className="flex h-screen w-screen items-center justify-center">
