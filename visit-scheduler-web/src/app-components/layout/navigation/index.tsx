@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { AiOutlineUser } from "react-icons/ai";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { RiCalendar2Line, RiDashboardLine } from "react-icons/ri";
 import { TbAdjustments } from "react-icons/tb";
 
 import NavigationItem, { type NavigationItemProps } from "#/layout/navigation/navigation-item";
-import { HiOutlineInformationCircle } from "react-icons/hi";
 
 const Navigation: FC = () => {
   const navigationItems = [
@@ -25,7 +25,7 @@ const Navigation: FC = () => {
       Icon: <RiCalendar2Line size={24} color="gray" />,
     },
     {
-      path: "/schedule/adjustment",
+      path: "/schedule/adjustment/*", // '*': wildcard
       label: "スケジュール調整",
       Icon: <TbAdjustments size={24} color="gray" />,
     },

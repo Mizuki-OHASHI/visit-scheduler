@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 
 import ScheduleOptimizeConfig from "#/schedule/adjustment/chouseisan-id/component/optimize-config";
 import { OptimizedScheduleComponent } from "#/schedule/adjustment/chouseisan-id/component/optimized-schedule";
@@ -11,6 +11,11 @@ import { OptimizeConfig, optimizeConfigSchema } from "@/schema/schedule";
 const ScheduleAdjustmentChouseisanIdComponent: FC<{ chouseisanId: ChouseisanId }> = ({ chouseisanId }) => {
   const { fetchSchedule, upsertScheduleConfig, optimizeSchedule } = useSchedule(chouseisanId);
   const { fetchAllMembers } = useMember();
+
+  useEffect(() => {
+    fetchSchedule.trigger();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chouseisanId]);
 
   const schedule = useMemo(() => {
     const data = fetchSchedule.data;
@@ -44,7 +49,7 @@ const ScheduleAdjustmentChouseisanIdComponent: FC<{ chouseisanId: ChouseisanId }
     upsertScheduleConfig
       .trigger({ data: config })
       .then(() => {
-        fetchSchedule.refetch();
+        fetchSchedule.trigger();
         alert("条件を保存しました。");
       })
       .catch((error) => {
@@ -58,7 +63,7 @@ const ScheduleAdjustmentChouseisanIdComponent: FC<{ chouseisanId: ChouseisanId }
       .trigger()
       .then((result) => {
         if (result.status === "optimal") {
-          fetchSchedule.refetch();
+          fetchSchedule.trigger();
           alert("最適化を実行しました。");
         } else if (result.status === "infeasible") {
           alert("最適化が不可能です。条件を見直してください。");
@@ -78,6 +83,7 @@ const ScheduleAdjustmentChouseisanIdComponent: FC<{ chouseisanId: ChouseisanId }
 
   return (
     <div className="flex size-full flex-col items-center space-y-4 p-8 pb-16 lg:w-3/4">
+      <h1 className="p-4 text-3xl">{schedule.schedule_master.title}</h1>
       <details className="flex w-full flex-col items-center space-y-4" open>
         <summary className="text-2xl">
           <span className="px-4">最適化の条件を設定する</span>

@@ -49,6 +49,7 @@ def get_schedule_from_chouseisan(
         chouseisan_id=chouseisan_id,
         title=title,
         candidates=candidates,
+        merge_with=[],  # TODO: merge_with
     )
 
     visit_users_schedule = extract_visit_users_schedule(df)

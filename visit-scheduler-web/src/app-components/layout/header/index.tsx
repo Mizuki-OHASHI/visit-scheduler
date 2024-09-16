@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FC } from "react";
 import { useRecoilValue } from "recoil";
 
@@ -9,7 +10,11 @@ const Header: FC = () => {
 
   return (
     <div className="z-10 flex h-16 shrink-0 items-center justify-between border-b border-slate-700 bg-slate-950 px-8 text-white">
-      <div className="text-2xl">Visit Scheduler</div>
+      <div className="text-2xl">
+        <Link href="/" passHref>
+          Visit Scheduler
+        </Link>
+      </div>
       <p className="font-mono">alpha version</p>
       <div>{user?.display_name}</div>
     </div>

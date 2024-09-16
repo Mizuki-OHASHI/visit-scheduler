@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { FC } from "react";
 import { HiOutlineExternalLink } from "react-icons/hi";
-import { MdSync } from "react-icons/md";
 import { TbAdjustments } from "react-icons/tb";
 
 import IconButton from "@/components/button/icon-button";
@@ -9,11 +8,11 @@ import { ScheduleMaster } from "@/schema/schedule";
 
 type ScheduleListItemProps = {
   schedule: ScheduleMaster;
-  onClick: () => void;
 };
 
-const ScheduleListItem: FC<ScheduleListItemProps> = ({ schedule, onClick }) => {
+const ScheduleListItem: FC<ScheduleListItemProps> = ({ schedule }) => {
   const sortedCandidates = schedule.candidates.slice().sort((a, b) => a.valueOf() - b.valueOf());
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between border-b border-gray-700 px-4">
@@ -25,27 +24,19 @@ const ScheduleListItem: FC<ScheduleListItemProps> = ({ schedule, onClick }) => {
         </div>
         <div className="flex h-8 items-center space-x-2">
           <Link href={`/schedule/adjustment/${schedule.chouseisan_id}`}>
-            <IconButton
-              onClick={() => {
-                console.log("adj");
-              }}
-            >
+            <IconButton>
               <TbAdjustments size={20} />
             </IconButton>
           </Link>
-          <IconButton
+          {/* <IconButton
             onClick={() => {
               console.log("sync");
             }}
           >
             <MdSync size={20} />
-          </IconButton>
+          </IconButton> */}
           <Link href={`https://chouseisan.com/s?h=${schedule.chouseisan_id}`} target="_blank">
-            <IconButton
-              onClick={() => {
-                console.log("adj");
-              }}
-            >
+            <IconButton>
               <HiOutlineExternalLink size={20} />
             </IconButton>
           </Link>

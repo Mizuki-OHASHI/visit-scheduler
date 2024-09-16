@@ -33,10 +33,7 @@ const NumberArrayInput: FC<NumberArrayInputProps> = ({ value, onChange, min, max
       return;
     }
     setTextValue(e.target.value);
-    if (parsed.length === 0) {
-      alert("数値を入力してください。");
-      return;
-    }
+    if (parsed.length === 0) return;
 
     onChange(parsed);
   };

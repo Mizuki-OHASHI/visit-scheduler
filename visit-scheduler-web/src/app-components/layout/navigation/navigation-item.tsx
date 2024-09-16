@@ -11,13 +11,17 @@ export type NavigationItemProps = {
 
 const NavigationItem: FC<NavigationItemProps> = ({ path, label, Icon }) => {
   const pathname = usePathname();
+  const pathMatcher = (path: string): RegExp => {
+    return new RegExp(`^${path.replace(/\//g, "\\/").replace(/\*/g, ".*")}$`);
+  };
+
   return (
     <Link href={path} passHref legacyBehavior>
       <div
         className={cn(
           "flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden hover:opacity-50 sm:justify-start",
           {
-            "bg-slate-900": path === pathname,
+            "bg-slate-900": pathMatcher(path).test(pathname),
           },
         )}
       >
