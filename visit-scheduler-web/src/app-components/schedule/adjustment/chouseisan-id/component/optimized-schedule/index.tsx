@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { FaCopy } from "react-icons/fa";
 
@@ -6,9 +7,10 @@ import VisitUserCard from "#/schedule/adjustment/chouseisan-id/component/optimiz
 import { useSchedule } from "@/api/useSchedule";
 import BasicButton from "@/components/button/basic-button";
 import IconButton from "@/components/button/icon-button";
+import BasicSelect from "@/components/select/basic-select";
 import CheckBox from "@/components/select/check-box";
 import { arrayToRecord, filterMap } from "@/lib/array";
-import { Date } from "@/lib/datetime";
+import { Date, newDate } from "@/lib/datetime";
 import { ScheduleStatus } from "@/schema/enum";
 import { VisitUserId } from "@/schema/id";
 import {
@@ -20,16 +22,23 @@ import {
 import { VisitUser } from "@/schema/user";
 
 type OptimizedScheduleProps = {
+  refetchSchedule: () => void;
   optimizedSchedule: OptimizedSchedule;
   constraints: ConstraintsByCandidate[];
   visitUsers: VisitUser[];
 };
 
-export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, visitUsers }: OptimizedScheduleProps) => {
+export const OptimizedScheduleComponent = ({
+  refetchSchedule,
+  optimizedSchedule,
+  constraints,
+  visitUsers,
+}: OptimizedScheduleProps) => {
   const { schedule } = optimizedSchedule;
   const { fetchMembersSchedule, updateScheduleManually } = useSchedule(optimizedSchedule.chouseisan_id);
   const [editMode, setEditMode] = useState(false);
   const [schedulesOnEdit, setSchedulesOnEdit] = useState<PickedDateWithMembers[]>([]);
+  const [dateToAdd, setDateToAdd] = useState<Date | null>(null);
 
   useEffect(() => {
     setSchedulesOnEdit(schedule);
@@ -98,6 +107,24 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
     });
   }, [schedule, schedulesOnEdit]);
 
+  const addVisitDateHandler = (date: Date) => {
+    setSchedulesOnEdit((schedules) => schedules.concat({ date, member: [] }));
+    alert(`${date.format("M/D")} を追加しました。\n変更を保存してください。`);
+  };
+
+  const removeVisitDateHandler = (date: Date) => {
+    if (!confirm(`${date.format("M/D")} を削除しますか？`)) return;
+    setSchedulesOnEdit((schedules) => schedules.filter((s) => s.date.toISOString() !== date.toISOString()));
+    alert(`${date.format("M/D")} を削除しました。\n変更を保存してください。`);
+  };
+
+  const unselectedDates = useMemo(() => {
+    const selectedDates = sortedScheduleOnEdit.map((s) => s.date.toISOString());
+    const unselectedDates_ = Object.keys(membersSchedulesByDate).filter((date) => !selectedDates.includes(date));
+    setDateToAdd(null);
+    return unselectedDates_;
+  }, [membersSchedulesByDate, sortedScheduleOnEdit]);
+
   const resetHandler = () => {
     setSchedulesOnEdit(schedule);
   };
@@ -123,6 +150,7 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
       })
       .then(() => {
         setEditMode(false);
+        refetchSchedule();
         alert("保存しました。");
       })
       .catch((error) => {
@@ -187,6 +215,7 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
               key={candidate.date.toISOString()}
               optCandidate={candidate}
               consCandidate={consCandidateRecord[candidate.date.toISOString()]}
+              removeThis={() => removeVisitDateHandler(candidate.date)}
             >
               <div className="flex size-full">
                 <div className="w-1/3 flex-col px-2">
@@ -223,6 +252,30 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
               </div>
             </CandidateArea>
           ))}
+          {unselectedDates.length > 0 && (
+            <div className="flex w-full items-center space-x-4 p-4">
+              <div className="h-8 min-w-32">
+                <BasicSelect
+                  options={unselectedDates}
+                  value={dateToAdd?.toISOString() ?? null}
+                  onChange={(value) => {
+                    setDateToAdd(newDate(dayjs(value)));
+                  }}
+                  keyToLabel={(key) => newDate(dayjs(key)).format("M/D")}
+                  placeholder="- / -"
+                />
+              </div>
+              <div className="h-8 grow">
+                <BasicButton
+                  onClick={() => {
+                    if (dateToAdd) addVisitDateHandler(dateToAdd);
+                  }}
+                >
+                  訪問日を追加する
+                </BasicButton>
+              </div>
+            </div>
+          )}
           <div className="flex h-20 w-full justify-center space-x-8 p-4">
             <BasicButton
               onClick={() => {

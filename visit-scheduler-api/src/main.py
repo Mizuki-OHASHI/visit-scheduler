@@ -1,15 +1,18 @@
+# Standard Library
+import traceback
 from time import time
 from typing import Any, Callable, Coroutine
 
+# Third Party Library
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+# First Party Library
 from dao.user import AppUserDao
 from lib.firebase import get_verify_token
 from lib.logger import logger
 from router import router_list
-import traceback
 
 app = FastAPI()
 
@@ -19,7 +22,7 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     openapi_schema = get_openapi(
-        title="Custom API",
+        title="Visit Scheduler API",
         version="1.0.0",
         description="Visit Scheduler API",
         routes=app.routes,

@@ -1,5 +1,7 @@
+# Standard Library
 from typing import List
 
+# First Party Library
 from schema.user import VisitUser
 
 

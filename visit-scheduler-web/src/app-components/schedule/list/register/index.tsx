@@ -45,7 +45,11 @@ const ScheduleRegister: FC<ScheduleRegisterProps> = ({ refetchSchedules }) => {
 
   return (
     <div className="flex w-full flex-col items-center space-y-4 px-4">
-      <div>調整さんのリンクを入力し、メンバーのスケジュールを同期します。</div>
+      <div>
+        調整さんのリンクを入力し、メンバーのスケジュールを同期します。
+        <br />
+        登録済みのスケジュールは上書きされます。
+      </div>
       <InputWithButton
         value={chouseisanLink}
         onChange={(v) => setChouseisanLink(v)}

@@ -22,6 +22,7 @@ export const scheduleMasterSchema = z.object({
   chouseisan_id: chouseisanIdSchema,
   title: z.string(),
   candidates: z.array(dateSchema),
+  merge_with: z.array(chouseisanIdSchema),
 });
 
 export type ScheduleMaster = z.infer<typeof scheduleMasterSchema>;

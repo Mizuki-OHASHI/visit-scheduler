@@ -1,5 +1,7 @@
+# Standard Library
 from typing import Callable
 
+# Third Party Library
 from firebase_admin import auth, credentials, firestore, initialize_app
 
 cred = credentials.Certificate("conf/service_account_key.json")

@@ -1,7 +1,10 @@
+# Standard Library
 from abc import ABC
 
+# Third Party Library
 from google.cloud.firestore import Client
 
+# First Party Library
 from lib.firebase import get_db_client
 
 

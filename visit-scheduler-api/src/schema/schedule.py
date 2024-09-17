@@ -1,7 +1,8 @@
-from ast import Dict
+# Standard Library
 from datetime import date, datetime
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
+# First Party Library
 from lib.datetime import date_to_datetime
 from schema.config import VSBaseModel
 from schema.enum import VSOptimizationStatus
@@ -12,6 +13,7 @@ class ScheduleMaster(VSBaseModel):
     chouseisan_id: str
     title: str
     candidates: list[date]
+    merge_with: list[str]
 
     def to_dto(self) -> "ScheduleMasterDto":
         candidates = [date_to_datetime(candidate) for candidate in self.candidates]
@@ -20,6 +22,7 @@ class ScheduleMaster(VSBaseModel):
             chouseisan_id=self.chouseisan_id,
             title=self.title,
             candidates=candidates,
+            merge_with=self.merge_with,
         )
 
 
@@ -31,14 +34,19 @@ class ScheduleMasterDto(VSBaseModel):
     chouseisan_id: str
     title: str
     candidates: list[datetime]
+    merge_with: Optional[list[str]] = None
 
     def to_model(self) -> ScheduleMaster:
         candidates = [candidate.date() for candidate in self.candidates]
+        merge_with = self.merge_with
+        if merge_with is None:
+            merge_with = []
 
         return ScheduleMaster(
             chouseisan_id=self.chouseisan_id,
             title=self.title,
             candidates=candidates,
+            merge_with=merge_with,
         )
 
 

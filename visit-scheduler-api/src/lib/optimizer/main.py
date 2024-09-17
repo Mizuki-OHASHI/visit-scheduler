@@ -1,11 +1,15 @@
+# Standard Library
 from typing import Dict, List
 
+# Third Party Library
+from mip import OptimizationStatus
+
+# First Party Library
 from lib.logger import logger
 from lib.optimizer.model import VisitOptimizer
 from schema.enum import VSOptimizationStatus
 from schema.schedule import OptimizationResult, ScheduleWithConfig
 from schema.user import VisitUser, VisitUserSchedule
-from mip import OptimizationStatus
 
 
 def run_visit_schedule_optimizer(

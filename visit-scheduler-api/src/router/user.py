@@ -1,13 +1,13 @@
+# Standard Library
 from datetime import datetime
-from typing import List
 
+# Third Party Library
 from fastapi import APIRouter, Request, Response, status
-from google.cloud.firestore import Client
 
-from dao.user import AppUserDao, VisitUserDao
+# First Party Library
+from dao.user import AppUserDao
 from lib.actor import get_actor_from_state
-from lib.spreadsheet import get_member_from_spreadsheet
-from schema.user import AppUser, AppUserBase, VisitUser
+from schema.user import AppUser, AppUserBase
 
 router = APIRouter(tags=["user"])
 app_user_dao = AppUserDao()

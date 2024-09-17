@@ -1,13 +1,14 @@
-import { updateInfo } from "#/about/update-info";
-import { dateSchema } from "@/lib/datetime";
 import Link from "next/link";
 import { FC } from "react";
 
+import { updateInfo } from "#/about/update-info";
+import { dateSchema } from "@/lib/datetime";
+
 const AbputPage: FC = () => {
   return (
-    <div className="size-full flex flex-col items-start md:w-3/4 px-8">
-      <div className="flex w-full py-16 flex-col items-start space-y-4">
-        <h1 className="text-xl p-4">開発者について</h1>
+    <div className="flex size-full flex-col items-start px-8 md:w-3/4">
+      <div className="flex w-full flex-col items-start space-y-4 py-16">
+        <h1 className="p-4 text-xl">開発者について</h1>
         <div className="flex w-full">
           <div className="w-1/3 shrink-0">名前</div>
           <div className="grow">大橋瑞輝</div>
@@ -25,7 +26,10 @@ const AbputPage: FC = () => {
           <div className="grow">
             東京大学
             <br />
-            教養学部理科一類 → 工学部物理工学科
+            教養学部理科一類 →{" "}
+            <Link className="underline" href="https://www.ap.t.u-tokyo.ac.jp/" target="_blank">
+              工学部物理工学科
+            </Link>
           </div>
         </div>
         <div className="flex w-full">
@@ -56,8 +60,8 @@ const AbputPage: FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex w-full py-16 flex-col items-start space-y-4">
-        <h1 className="text-xl p-4">本サービスについて</h1>
+      <div className="flex w-full flex-col items-start space-y-4 py-16">
+        <h1 className="p-4 text-xl">本サービスについて</h1>
         <div className="flex w-full">
           <div className="w-1/3 shrink-0">概要</div>
           <div className="grow break-words">
@@ -111,14 +115,14 @@ const AbputPage: FC = () => {
           <div className="w-1/3 shrink-0">バージョン</div>
           <div className="grow break-words">
             <div>
-              現在公開中のサービスは アルファ版
-              です。最適化が行われた後の手動による調整機能などの実装が予定されています。
+              現在公開中のサービスはアルファ版です。
+              一部の機能が未実装であったり、予期せぬエラーが発生する可能性があります。
             </div>
           </div>
         </div>
         <div className="flex w-full">
           <div className="w-1/3 shrink-0">アップデート情報</div>
-          <div className="grow break-words flex flex-col space-y-2">
+          <div className="flex grow flex-col space-y-2 break-words">
             {updateInfo.map(({ date, contents }) => (
               <div key={date} className="flex space-x-2">
                 <div className="w-24 shrink-0">{dateSchema.parse(date).format("YY/M/D")}</div>

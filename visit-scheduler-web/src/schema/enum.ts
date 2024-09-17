@@ -8,6 +8,19 @@ export const userRoleSchema = z.enum(userRoleArr);
 
 export type UserRole = z.infer<typeof userRoleSchema>;
 
+export const userRoleJa = (r: UserRole) => {
+  switch (r) {
+    case "dev":
+      return "開発者";
+    case "admin":
+      return "管理者";
+    case "user":
+      return "ユーザー";
+    default:
+      return "-";
+  }
+};
+
 //////////////////////// Driver Level ////////////////////////
 
 export const driverLevelArr = ["unable", "beginner", "intermediate", "advanced"] as const;

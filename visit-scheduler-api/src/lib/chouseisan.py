@@ -1,12 +1,15 @@
+# Standard Library
 import io
 import re
 from datetime import date
 from time import time
 from typing import Any, Dict, List, Optional, Tuple
 
+# Third Party Library
 import pandas as pd
 import requests
 
+# First Party Library
 from lib.cache import LRUCache
 from lib.datetime import parse_date
 from lib.format_name import format_name
@@ -49,6 +52,7 @@ def get_schedule_from_chouseisan(
         chouseisan_id=chouseisan_id,
         title=title,
         candidates=candidates,
+        merge_with=[],  # TODO: merge_with
     )
 
     visit_users_schedule = extract_visit_users_schedule(df)
@@ -57,7 +61,7 @@ def get_schedule_from_chouseisan(
     return schedule_master, visit_users_schedule
 
 
-def get_visit_user_schedule(
+def get_visit_user_schedule_from_chouseisan(
     chouseisan_id: str,
 ) -> Optional[Dict[str, List[VisitUserSchedule]]]:
     """訪問メンバーのスケジュール情報を取得する
@@ -65,7 +69,9 @@ def get_visit_user_schedule(
     - できるだけキャッシュを使う
     """
 
-    cached_visit_user_schedule = visit_user_schedule_cache.get(chouseisan_id)
+    cached_visit_user_schedule: Optional[Dict[str, List[VisitUserSchedule]]] = (
+        visit_user_schedule_cache.get(chouseisan_id)
+    )
     if cached_visit_user_schedule:
         return cached_visit_user_schedule
 
