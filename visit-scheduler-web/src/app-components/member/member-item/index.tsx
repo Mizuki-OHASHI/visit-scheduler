@@ -1,5 +1,6 @@
 import { FC } from "react";
 
+import TaskTag from "@/components/tag/task";
 import { driverLevelJa, genderJa } from "@/schema/enum";
 import { VisitUser } from "@/schema/user";
 
@@ -19,9 +20,7 @@ const MemberItem: FC<MemberItemProps> = ({ visitUser }) => {
       <div className="w-1/6 shrink-0">{driverLevelJa(driver_level)}</div>
       <div className="flex grow flex-wrap">
         {responsible_tasks.map((task) => (
-          <div key={task} className="m-0.5 rounded-full bg-slate-700 px-2 py-1 text-xs">
-            {task}
-          </div>
+          <TaskTag key={task} task={task} />
         ))}
       </div>
     </div>

@@ -35,6 +35,10 @@ def validate_visit_user_schedule_dict(v: Any) -> bool:
 visit_user_schedule_cache = LRUCache(10, validate_visit_user_schedule_dict)
 
 
+def clear_visit_user_schedule_cache():
+    visit_user_schedule_cache.clear()
+
+
 def get_schedule_from_chouseisan(
     chouseisan_id: str,
 ) -> Optional[Tuple[ScheduleMaster, Dict[str, List[VisitUserSchedule]]]]:

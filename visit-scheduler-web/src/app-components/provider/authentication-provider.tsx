@@ -54,7 +54,12 @@ const VSAuthNProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [googleAccount]);
 
-  const isAuth = useMemo(() => userCtx?.fetchMe.data || pathname.startsWith("/auth"), [userCtx, pathname]);
+  const isAuth = useMemo(
+    () =>
+      (userCtx?.fetchMe.data && (!pathname.startsWith("/dev") || userCtx.fetchMe.data.role == "dev")) ||
+      pathname.startsWith("/auth"),
+    [userCtx, pathname],
+  );
 
   return (
     <>

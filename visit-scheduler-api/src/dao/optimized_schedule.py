@@ -12,6 +12,10 @@ from schema.schedule import OptimizedSchedule, OptimizedScheduleDto
 optimized_schedule_cache = LRUCache(20, lambda v: isinstance(v, OptimizedSchedule))
 
 
+def clear_optimized_schedule_cache():
+    optimized_schedule_cache.clear()
+
+
 class OptimizedScheduleDao(Dao):
     def __init__(self, db: Client = None):
         col_name = "optimized_schedule"

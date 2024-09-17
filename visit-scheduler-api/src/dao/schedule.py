@@ -13,6 +13,10 @@ from schema.schedule import ScheduleMaster, ScheduleMasterDto
 schedule_master_cache = LRUCache(20, lambda v: isinstance(v, ScheduleMaster))
 
 
+def clear_schedule_master_cache():
+    schedule_master_cache.clear()
+
+
 class ScheduleMasterDao(Dao):
     def __init__(self, db: Client = None):
         col_name = "schedule_master"

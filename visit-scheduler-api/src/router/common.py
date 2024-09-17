@@ -3,9 +3,12 @@ from fastapi import APIRouter, Request, Response, logger, status
 
 # First Party Library
 from dao.common import CommonDao
-from dao.optimize_config import OptimizeConfigDao
-from dao.user import VisitUserDao
+from dao.optimize_config import OptimizeConfigDao, clear_optimize_config_cache
+from dao.optimized_schedule import clear_optimized_schedule_cache
+from dao.schedule import clear_schedule_master_cache
+from dao.user import VisitUserDao, clear_app_user_cache, clear_visit_user_cache
 from lib.actor import get_actor_from_state
+from lib.chouseisan import clear_visit_user_schedule_cache
 from lib.logger import logger
 from schema.common import Common
 from schema.enum import AppUserRole
@@ -56,5 +59,20 @@ def refresh_common(request: Request):
     status_code=status.HTTP_204_NO_CONTENT,
     description="キャッシュをクリアする (dev 権限が必要)",
 )
-def clear_cache():
-    NotImplementedError("Not implemented yet")
+def clear_cache(request: Request, visit_user: int = 0):
+    actor = get_actor_from_state(request)
+    if actor.role != AppUserRole.dev.value:
+        return Response(
+            status_code=status.HTTP_403_FORBIDDEN,
+            headers={"message": "permission denied"},
+        )
+
+    clear_schedule_master_cache()
+    clear_optimize_config_cache()
+    clear_optimized_schedule_cache()
+    clear_app_user_cache()
+    if visit_user == 1:
+        clear_visit_user_cache()
+    clear_visit_user_schedule_cache()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

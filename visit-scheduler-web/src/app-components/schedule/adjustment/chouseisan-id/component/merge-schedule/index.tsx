@@ -89,7 +89,7 @@ const MergeSchedule: FC<MergeScheduleProps> = ({ chouseisanId, scheduleMaster, r
         </div>
       </div>
       {scheduleMaster.merge_with.length > 0 && (
-        <div className="w-full flex-col space-y-2 px-4">
+        <div className="flex w-full flex-col space-y-2 px-4">
           <div>統合済みの調整さん</div>
           {scheduleMaster.merge_with.map((merge_with) => (
             <div

@@ -81,13 +81,14 @@ def merge_visit_user_schedule(
     """
 
     candidate_set = set(candidates)
+    merged = base.copy()
 
     for name, schedules in new.items():
         if name not in base:
             filtered_schedules = [s for s in schedules if s.candidate in candidate_set]
-            base[name] = filtered_schedules
+            merged[name] = filtered_schedules
 
-    return base
+    return merged
 
 
 def get_visit_user_schedule(
