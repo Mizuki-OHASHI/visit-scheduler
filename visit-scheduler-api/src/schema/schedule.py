@@ -1,6 +1,8 @@
+# Standard Library
 from datetime import date, datetime
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
+# First Party Library
 from lib.datetime import date_to_datetime
 from schema.config import VSBaseModel
 from schema.enum import VSOptimizationStatus

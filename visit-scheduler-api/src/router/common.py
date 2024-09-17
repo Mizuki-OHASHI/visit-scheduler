@@ -1,5 +1,7 @@
+# Third Party Library
 from fastapi import APIRouter, Request, Response, logger, status
 
+# First Party Library
 from dao.common import CommonDao
 from dao.optimize_config import OptimizeConfigDao
 from dao.user import VisitUserDao
@@ -52,7 +54,7 @@ def refresh_common(request: Request):
 @router.post(
     "/cache/clear",
     status_code=status.HTTP_204_NO_CONTENT,
-    description="キャッシュをクリアする",
+    description="キャッシュをクリアする (dev 権限が必要)",
 )
 def clear_cache():
     NotImplementedError("Not implemented yet")

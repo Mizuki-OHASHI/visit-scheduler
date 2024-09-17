@@ -1,15 +1,18 @@
+# Standard Library
 from typing import List
 
+# Third Party Library
 from fastapi import APIRouter, Response, status
 
+# First Party Library
 from dao.optimize_config import OptimizeConfigDao
-from dao.schedule import ScheduleMasterDao
 from dao.optimized_schedule import OptimizedScheduleDao
+from dao.schedule import ScheduleMasterDao
 from dao.user import VisitUserDao
-from lib.chouseisan import get_schedule_from_chouseisan, get_visit_user_schedule
+from lib.chouseisan import get_schedule_from_chouseisan
 from lib.logger import logger
 from lib.optimizer.main import run_visit_schedule_optimizer
-from lib.visit_user import diff_visit_users_names
+from lib.visit_user import diff_visit_users_names, get_visit_user_schedule
 from schema.optimize_config import OptimizeConfig
 from schema.schedule import (
     OptimizationResult,
@@ -43,7 +46,11 @@ def sync_chouseisan_schedule(chouseisan_id: str):
 
     schedule_master, visit_users_schedule = result
 
-    schedule_master_dao.create(schedule_master)
+    existing_schedule_master = schedule_master_dao.get_by_id(chouseisan_id)
+    if existing_schedule_master is not None:
+        schedule_master.merge_with = existing_schedule_master.merge_with
+
+    schedule_master_dao.upsert(schedule_master)
 
     visit_users = visit_user_dao.get_all()
     diff_visit_users = diff_visit_users_names(visit_users_schedule.keys(), visit_users)
@@ -154,7 +161,7 @@ def optimize_schedule(chouseisan_id: str):
 
     visit_users = visit_user_dao.get_all()
 
-    visit_user_schedule = get_visit_user_schedule(chouseisan_id)
+    visit_user_schedule = get_visit_user_schedule(schedule_master)
     if visit_user_schedule is None:
         return Response(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -201,7 +208,14 @@ def update_manual_schedule(chouseisan_id: str, manual_schedule: OptimizedSchedul
     description="メンバーの日程情報取得",
 )
 def get_member_schedule(chouseisan_id: str):
-    visit_user_schedule = get_visit_user_schedule(chouseisan_id)
+    schedule_master = schedule_master_dao.get_by_id(chouseisan_id)
+    if schedule_master is None:
+        return Response(
+            status_code=status.HTTP_404_NOT_FOUND,
+            headers={"message": "schedule data with the given ID not found."},
+        )
+
+    visit_user_schedule = get_visit_user_schedule(schedule_master)
     if visit_user_schedule is None:
         return Response(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -220,3 +234,58 @@ def get_member_schedule(chouseisan_id: str):
     ]
 
     return visit_users_with_schedule
+
+
+@router.post(
+    "/schedule/merge/{chouseisan_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+)
+def merge_schedule(chouseisan_id: str, merge_with: str):
+    schedule_master = schedule_master_dao.get_by_id(chouseisan_id)
+    if schedule_master is None:
+        return Response(
+            status_code=status.HTTP_404_NOT_FOUND,
+            headers={"message": "base schedule data with the given ID not found."},
+        )
+    if merge_with in schedule_master.merge_with:
+        return Response(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            headers={"message": "schedule data is already merged."},
+        )
+
+    schedule_master_with = schedule_master_dao.get_by_id(merge_with)
+    if schedule_master_with is None:
+        return Response(
+            status_code=status.HTTP_404_NOT_FOUND,
+            headers={"message": "merge schedule data with the given ID not found."},
+        )
+
+    schedule_master.merge_with.append(merge_with)
+    schedule_master_dao.upsert(schedule_master)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.delete(
+    "/schedule/merge/{chouseisan_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
+)
+def unmerge_schedule(chouseisan_id: str, merge_with: str):
+    schedule_master = schedule_master_dao.get_by_id(chouseisan_id)
+    if schedule_master is None:
+        return Response(
+            status_code=status.HTTP_404_NOT_FOUND,
+            headers={"message": "base schedule data with the given ID not found."},
+        )
+    if merge_with not in schedule_master.merge_with:
+        return Response(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            headers={"message": "schedule data is not merged."},
+        )
+
+    schedule_master.merge_with.remove(merge_with)
+    schedule_master_dao.upsert(schedule_master)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

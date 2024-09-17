@@ -22,12 +22,18 @@ import {
 import { VisitUser } from "@/schema/user";
 
 type OptimizedScheduleProps = {
+  refetchSchedule: () => void;
   optimizedSchedule: OptimizedSchedule;
   constraints: ConstraintsByCandidate[];
   visitUsers: VisitUser[];
 };
 
-export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, visitUsers }: OptimizedScheduleProps) => {
+export const OptimizedScheduleComponent = ({
+  refetchSchedule,
+  optimizedSchedule,
+  constraints,
+  visitUsers,
+}: OptimizedScheduleProps) => {
   const { schedule } = optimizedSchedule;
   const { fetchMembersSchedule, updateScheduleManually } = useSchedule(optimizedSchedule.chouseisan_id);
   const [editMode, setEditMode] = useState(false);
@@ -103,20 +109,19 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
 
   const addVisitDateHandler = (date: Date) => {
     setSchedulesOnEdit((schedules) => schedules.concat({ date, member: [] }));
-    alert(`${date.format("M/D")} を追加しました。`);
+    alert(`${date.format("M/D")} を追加しました。\n変更を保存してください。`);
   };
 
   const removeVisitDateHandler = (date: Date) => {
     if (!confirm(`${date.format("M/D")} を削除しますか？`)) return;
     setSchedulesOnEdit((schedules) => schedules.filter((s) => s.date.toISOString() !== date.toISOString()));
-    alert(`${date.format("M/D")} を削除しました。`);
+    alert(`${date.format("M/D")} を削除しました。\n変更を保存してください。`);
   };
 
   const unselectedDates = useMemo(() => {
     const selectedDates = sortedScheduleOnEdit.map((s) => s.date.toISOString());
     const unselectedDates_ = Object.keys(membersSchedulesByDate).filter((date) => !selectedDates.includes(date));
-    if (unselectedDates_.length > 0) setDateToAdd(newDate(dayjs(unselectedDates_[0])));
-    else setDateToAdd(null);
+    setDateToAdd(null);
     return unselectedDates_;
   }, [membersSchedulesByDate, sortedScheduleOnEdit]);
 
@@ -145,6 +150,7 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
       })
       .then(() => {
         setEditMode(false);
+        refetchSchedule();
         alert("保存しました。");
       })
       .catch((error) => {
@@ -248,14 +254,15 @@ export const OptimizedScheduleComponent = ({ optimizedSchedule, constraints, vis
           ))}
           {unselectedDates.length > 0 && (
             <div className="flex w-full items-center space-x-4 p-4">
-              <div className="h-8 min-w-24">
+              <div className="h-8 min-w-32">
                 <BasicSelect
                   options={unselectedDates}
-                  value={dateToAdd?.toISOString() ?? ""}
+                  value={dateToAdd?.toISOString() ?? null}
                   onChange={(value) => {
                     setDateToAdd(newDate(dayjs(value)));
                   }}
                   keyToLabel={(key) => newDate(dayjs(key)).format("M/D")}
+                  placeholder="- / -"
                 />
               </div>
               <div className="h-8 grow">

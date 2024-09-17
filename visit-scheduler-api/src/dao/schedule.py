@@ -1,8 +1,11 @@
+# Standard Library
 from typing import Optional
 from venv import logger
 
+# Third Party Library
 from google.cloud.firestore import Client
 
+# First Party Library
 from dao.dao import Dao
 from lib.cache import LRUCache
 from schema.schedule import ScheduleMaster, ScheduleMasterDto
@@ -15,7 +18,7 @@ class ScheduleMasterDao(Dao):
         col_name = "schedule_master"
         super().__init__(col_name, db=db)
 
-    def create(self, schedule_master: ScheduleMaster) -> None:
+    def upsert(self, schedule_master: ScheduleMaster) -> None:
         doc_ref = self.col_ref.document(schedule_master.chouseisan_id)
         doc_ref.set(schedule_master.to_dto().model_dump(), merge=True)
         schedule_master_cache.set(schedule_master.chouseisan_id, schedule_master)
@@ -68,6 +71,3 @@ class ScheduleMasterDao(Dao):
             cached_count,
         )
         return schedule_masters
-
-    def update(self, schedule_master: ScheduleMaster) -> None:
-        NotImplementedError("not implemented yet")

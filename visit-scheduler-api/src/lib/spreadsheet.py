@@ -1,12 +1,15 @@
+# Standard Library
 import io
 from datetime import datetime
 from hmac import new
 from time import time
 from typing import List, Optional
 
+# Third Party Library
 import pandas as pd
 import requests
 
+# First Party Library
 from lib.datetime import parse_date
 from lib.format_name import format_name
 from lib.id import new_id

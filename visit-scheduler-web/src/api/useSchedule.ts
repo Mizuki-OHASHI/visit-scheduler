@@ -35,4 +35,9 @@ export const useSchedule = (chouseisanId: ChouseisanId) => ({
   updateScheduleManually: useMutation<OptimizedSchedule>(["schedule", "manual", chouseisanId], {
     method: "PUT",
   }),
+  mergeSchedule: useMutation<{ merge_with: ChouseisanId }>(["schedule", "merge", chouseisanId], { inQuery: true }),
+  unmergeSchedule: useMutation<{ merge_with: ChouseisanId }>(["schedule", "merge", chouseisanId], {
+    inQuery: true,
+    method: "DELETE",
+  }),
 });

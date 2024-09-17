@@ -1,13 +1,20 @@
+# Standard Library
 from datetime import date
 from typing import Dict, List
 
+# Third Party Library
 import numpy as np
 from mip import Model, minimize, xsum
 
+# First Party Library
 from lib.logger import logger
 from schema.enum import DriverLevel, Gender, ScheduleStatus
 from schema.optimize_config import OptimizeConfigByCandidate
-from schema.schedule import OptimizedSchedule, PickedDateWithMember, ScheduleWithConfig
+from schema.schedule import (
+    OptimizedSchedule,
+    PickedDateWithMember,
+    ScheduleWithConfig,
+)
 from schema.user import VisitUser, VisitUserSchedule
 
 

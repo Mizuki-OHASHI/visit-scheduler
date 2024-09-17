@@ -1,5 +1,7 @@
+# Third Party Library
 from google.cloud.firestore import Client
 
+# First Party Library
 from dao.dao import Dao
 from schema.common import Common
 

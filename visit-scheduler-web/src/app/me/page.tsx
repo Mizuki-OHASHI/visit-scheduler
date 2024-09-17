@@ -1,3 +1,5 @@
-export default function MePage() {
-  return <div>Sorry, this page is not implemented yet.</div>;
-}
+"use client";
+
+import MyPage from "@/app-components/me";
+
+export default MyPage;
