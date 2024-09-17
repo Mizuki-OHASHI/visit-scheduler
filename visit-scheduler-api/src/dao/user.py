@@ -13,6 +13,10 @@ from schema.user import AppUser, VisitUser, VisitUserDto
 app_user_cache = LRUCache(10, lambda v: isinstance(v, AppUser))
 
 
+def clear_app_user_cache():
+    app_user_cache.clear()
+
+
 class AppUserDao(Dao):
     def __init__(self, db: Client = None):
         col_name = "app_user"
@@ -60,6 +64,11 @@ class AppUserDao(Dao):
 
 
 visit_user_cache = LRUCache(300, lambda v: isinstance(v, VisitUser))
+
+
+def clear_visit_user_cache():
+    visit_user_cache.clear()
+
 
 allowed_fields_ls = [
     "name",

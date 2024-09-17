@@ -10,6 +10,10 @@ from schema.optimize_config import OptimizeConfig, OptimizeConfigDto
 optimize_config_cache = LRUCache(20, lambda v: isinstance(v, OptimizeConfig))
 
 
+def clear_optimize_config_cache():
+    optimize_config_cache.clear()
+
+
 class OptimizeConfigDao(Dao):
     def __init__(self, db=None):
         col_name = "optimize_config"
