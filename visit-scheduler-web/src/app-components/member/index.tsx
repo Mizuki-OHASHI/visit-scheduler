@@ -5,15 +5,27 @@ import { MdSync } from "react-icons/md";
 import MemberItem from "#/member/member-item";
 import { useMember } from "@/api/useMember";
 import InputWithButton from "@/components/input/input-with-button";
+import MultiSelect from "@/components/select/multi-select";
 import { spreadsheetIdSchema } from "@/schema/id";
 
 const MemberPage: FC = () => {
   const spreadSheetExample =
     "https://docs.google.com/spreadsheets/d/1yVR0FWdVUVEIKwNdyb-WGY-d_cZOD4-dGip2g-4GzCU/edit?usp=sharing";
   const [googleSpreadSheetLink, setGoogleSpreadSheetLink] = useState<string>("");
+  const [selectedCohorts, setSelectedCohorts] = useState<number[]>([]);
   const { syncSpreadsheetMember, fetchAllMembers } = useMember();
 
   const visitUsers = useMemo(() => fetchAllMembers.data ?? [], [fetchAllMembers.data]);
+
+  const cohortOptions = useMemo(() => {
+    const cohorts = visitUsers.map((u) => u.entry_cohort);
+    return Array.from(new Set(cohorts)).sort((a, b) => a - b);
+  }, [visitUsers]);
+
+  const filteredVisitUsers = useMemo(() => {
+    if (selectedCohorts.length === 0) return visitUsers;
+    return visitUsers.filter((u) => selectedCohorts.includes(u.entry_cohort));
+  }, [visitUsers, selectedCohorts]);
 
   const syncSpreadsheetHandler = (spreadsheetLink: string) => {
     const { data: spradsheetId, success } = spreadsheetIdSchema.safeParse(spreadsheetLink);
@@ -69,6 +81,16 @@ const MemberPage: FC = () => {
         </div>
       </details>
       <div className="mb-6 mt-12 w-full text-center text-2xl">【 メンバー一覧 】</div>
+      <div className="mb-4 flex items-center gap-4">
+        <span className="shrink-0 text-sm">入会期で絞り込み:</span>
+        <MultiSelect
+          options={cohortOptions}
+          selected={selectedCohorts}
+          onChange={setSelectedCohorts}
+          keyToLabel={(c) => `${c}期`}
+          placeholder="すべて表示"
+        />
+      </div>
       <div className="flex flex-col space-y-2 pb-16 text-sm sm:text-base">
         <div className="flex w-full items-center space-x-2 border-b border-slate-700 px-4 py-2 text-center">
           <div className="w-1/6 shrink-0">氏名</div>
@@ -78,7 +100,7 @@ const MemberPage: FC = () => {
           <div className="w-1/6 shrink-0">運転</div>
           <div className="flex grow flex-wrap justify-center">担当</div>
         </div>
-        {visitUsers.map((visitUser) => (
+        {filteredVisitUsers.map((visitUser) => (
           <MemberItem key={visitUser.id} visitUser={visitUser} />
         ))}
       </div>
