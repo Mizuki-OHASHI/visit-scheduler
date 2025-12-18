@@ -23,4 +23,10 @@ export const updateInfo = [
       "「アカウント」ページを追加しました。",
     ],
   },
+  {
+    date: "2024-12-18",
+    contents: [
+      "メンバー一覧ページで「入会期」による絞り込み機能を追加しました（複数選択可）。",
+    ],
+  },
 ] as const satisfies { date: string; contents: string[] }[];
